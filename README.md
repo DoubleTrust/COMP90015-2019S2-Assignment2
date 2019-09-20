@@ -1,6 +1,10 @@
 # COMP90015-2019S2-Assignment2
  墨尔本大学2019年S2分布式系统项目文件
  
+## 版本更新
+### 2019/09/20
+ - 添加RMI框架
+ 
 ## RMI 代码说明[2019-09-20]
 
  项目有3个package，分别为client，remote和server。
