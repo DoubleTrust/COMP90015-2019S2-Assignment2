@@ -36,7 +36,7 @@ public class RemoteServer {
 			// Create the interface of remote service
 			RemoteInterface remoteMethods = new RemoteImplementation();
 			
-			// Create the registry and publish the remote object's stub in the registry under the name "RemoteOperation"
+			// Create the registry (localhost with specified port number) and publish the remote object's stub in the registry under the name "RemoteOperation"
 			Registry registry = LocateRegistry.getRegistry(Integer.parseInt(this.port));
 			registry.rebind("RemoteOperation", remoteMethods);
 			
