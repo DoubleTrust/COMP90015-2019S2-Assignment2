@@ -1,9 +1,9 @@
 # COMP90015-2019S2-Assignment2
  墨尔本大学2019年S2分布式系统项目文件
  
-# RMI 代码说明
+# RMI 代码说明[2019-09-20]
 
-[2019-09-20] 目前项目有3个package，分别为client，remote和server。
+ 项目有3个package，分别为client，remote和server。
 
 - client：此package用于实现client的连接以及调用RMI的相关接口。
 - remote：此package用于编写RMI接口，以便于client调用。
