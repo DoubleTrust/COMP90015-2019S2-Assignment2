@@ -11,7 +11,7 @@ import remote.RemoteInterface;
 
 /**
  * @author Sebastian Yan
- * @date 20/09/2019
+ * @date 21/09/2019
  */
 public class Client {
 	/** 
@@ -21,17 +21,24 @@ public class Client {
 	private String port;
 	public RemoteInterface remoteInterface;
 	
+	/** 
+	 * Constructor
+	 */
 	public Client() {
+		// Get the host name and port number
 		this.host = JOptionPane.showInputDialog(null, "Please type the host name:\n", "Port number required", JOptionPane.PLAIN_MESSAGE);
 		this.port = JOptionPane.showInputDialog(null, "Please type a port number:\n", "Port number required", JOptionPane.PLAIN_MESSAGE);
+	
+		// Verify the input
+		// code to be added...
 	}
 	
 	/**
-	 *  Client request for setting up connection	
+	 *  Setting up connection to the server	
 	 */
 	public void buildConnection(){
 		try {
-			// Set up connections
+			// Connect to registry using host name and port number
 			Registry registry = LocateRegistry.getRegistry(this.host, Integer.parseInt(this.port));
 			
 			//Retrieve the stub/proxy for the remote operation from the registry
@@ -44,17 +51,20 @@ public class Client {
 	}
 	
 	/**
-     * Main function
+     * Main function to test remote services
      */
 	public static void main(String[] args) {
-		// Test connections with server using RMI
+		
+		// Connect server using RMI
 		Client client = new Client();
 		client.buildConnection();
 			
 		
-		// Test remote function after setting up the connection
+		// Utilize remote functions
 		try {
-			client.remoteInterface.testRemoteFunction();
+			client.remoteInterface.openCanvas();
+			
+			
 			
 		} catch (RemoteException e) {
 			e.printStackTrace();

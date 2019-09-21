@@ -6,16 +6,21 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ExecutorService;
+
+import server.DrawPictureFRame;
 import remote.RemoteInterface;
 
-
+/**
+ * @author Sebastian Yan
+ * @date 21/09/2019
+ */
 public class RemoteImplementation extends UnicastRemoteObject implements RemoteInterface{
-	// Define client amount
-	//private int connectClients;
 	
-	// Constructor
+	/** 
+	 * Constructor
+	 */
 	protected RemoteImplementation() throws RemoteException {
-		//this.connectClients = 0;
+
 	}
 	
 	@Override
@@ -23,6 +28,12 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 		System.out.println("remote function executed.");
 	}
 	
+	
+	@Override
+	public void openCanvas() throws RemoteException{
+		DrawPictureFRame pic1= new DrawPictureFRame();
+		pic1.setVisible(true);
+	}
 
 	
 
