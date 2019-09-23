@@ -8,14 +8,14 @@ public class DrawPictureCanvas extends Canvas{
 
 	private  Image image = null;
 	/*
-	 *  设置画�?�中的图片
-	 *  image //画�?�展示的对象
+	 *  ���û����е�ͼƬ
+	 *  image //����չʾ�Ķ���
 	 */
 	public void setImage(Image image){
 		this.image = image;	
 	}
 	/*
-	 * �?写paint方法
+	 * ��дpaint����
 	 */
 	public void paint(Graphics g){
 		g.drawImage(image, 0, 0, null);
@@ -23,6 +23,6 @@ public class DrawPictureCanvas extends Canvas{
 	}
 	
 	public void update(Graphics g){
-		paint(g);//调用paint方法
+		paint(g);//����paint����
 	}
 }

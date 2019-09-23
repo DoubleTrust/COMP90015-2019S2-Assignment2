@@ -11,7 +11,7 @@ import remote.RemoteInterface;
 
 /**
  * @author Sebastian Yan
- * @date 21/09/2019
+ * @date 23/09/2019
  */
 public class Client {
 	/** 
@@ -19,6 +19,7 @@ public class Client {
 	 */
 	private String host;
 	private String port;
+	private String username;
 	public RemoteInterface remoteInterface;
 	
 	/** 
@@ -26,11 +27,13 @@ public class Client {
 	 */
 	public Client() {
 		// Get the host name and port number
-		this.host = JOptionPane.showInputDialog(null, "Please type the host name:\n", "Port number required", JOptionPane.PLAIN_MESSAGE);
+		this.host = JOptionPane.showInputDialog(null, "Please type the host name:\n", "Host name required", JOptionPane.PLAIN_MESSAGE);
 		this.port = JOptionPane.showInputDialog(null, "Please type a port number:\n", "Port number required", JOptionPane.PLAIN_MESSAGE);
-	
+		this.username = JOptionPane.showInputDialog(null, "Please type your username:\n", "Username required", JOptionPane.PLAIN_MESSAGE);
+		
 		// Verify the input
 		// code to be added...
+		
 	}
 	
 	/**
@@ -47,29 +50,15 @@ public class Client {
 						
 		} catch (Exception e) {			
 			e.printStackTrace();
+			JOptionPane.showConfirmDialog(null, "Error.", "Error", JOptionPane.WARNING_MESSAGE);
 		}
 	}
 	
 	/**
-     * Main function to test remote services
+     * Display username(s)
      */
-	public static void main(String[] args) {
-		
-		// Connect server using RMI
-		Client client = new Client();
-		client.buildConnection();
-			
-		
-		// Utilize remote functions
-		try {
-			client.remoteInterface.openCanvas();
-			
-			
-			
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		
+	public void displayUserInfo() {
+		// Similar to auto-update dictionary info
 		
 	}
 }

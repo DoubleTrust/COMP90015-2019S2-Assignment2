@@ -2,6 +2,22 @@
  墨尔本大学2019年S2分布式系统项目文件
 
 ## 版本迭代
+
+### 2019/09/23
+
+- GUI更正：将server GUI 修改为Client GUI，原server输入模式更改为命令行输入
+
+- Client新增用户名输入（计划用于RMI搜集用户信息并展现）。
+
+- RMI新增两个远程函数：openCanvas() 与disposeCanvas()
+
+  （注： 原canvas关闭时仅修改visibility； 若需删除，点击“Disconnect”）
+
+- Canvas更新
+
+  - 新增保存、另存为、绘画预设形状等功能
+  - 修复原版本的BUG，更新GUI
+
 ### 2019/09/21
 
 - 删除RMI中的Socket等无效代码，增添部分注释
@@ -11,10 +27,10 @@
 
  - 添加RMI框架
 
-## RMI 代码说明[2019-09-20]
+## RMI 代码说明[2019-09-23]
 
  项目有3个package，分别为client，remote和server。
 
-- client：此package用于实现client的连接以及调用RMI的相关接口。
+- client：此package用于实现client的连接以及调用RMI的相关接口。（包含易UI界面，计划用于聊天窗口或显示玩家名）
 - remote：此package用于编写RMI接口，以便于client调用。
-- server：此package用于实现server、RMI的创建以及RMI接口的实现。（为方便起见，该包也实现了server的简易UI界面）
+- server：此package用于实现server、RMI的创建以及RMI接口的实现。

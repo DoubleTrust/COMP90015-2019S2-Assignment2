@@ -41,8 +41,8 @@ import java.awt.*;
 
 public class DrawingBoard extends JFrame {
 		// Canvas configuration
-		int canvasWidth = 570;
-		int canvasHeight = 410;
+		int canvasWidth = 1024;
+		int canvasHeight = 768;
 		BufferedImage image = new BufferedImage( canvasWidth, canvasHeight, BufferedImage.TYPE_INT_BGR);// Size and type of the image
 		Graphics gs = image.getGraphics();
 		Graphics2D g = (Graphics2D) gs;
@@ -99,7 +99,7 @@ public class DrawingBoard extends JFrame {
 		
 		public  DrawingBoard() {
 			setResizable(false);
-			setBounds( 500, 100, 574, 460);
+			setBounds( 500, 100, 1029, 757);
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 			setTitle("DrawingBoard");
 			init();
