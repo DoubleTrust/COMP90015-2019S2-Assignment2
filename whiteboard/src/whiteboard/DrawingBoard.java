@@ -9,7 +9,9 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,38 +19,42 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 
 
-import java.awt.BorderLayout;//±ß½ç²¼¾Ö
-import java.awt.BasicStroke;//»ù±¾»­±Ê
-import java.awt.event.ActionListener;//¶¯×÷ÊÂ¼ş 
-import java.awt.event.ActionEvent; //¶¯×÷¼àÌı
+import java.awt.BorderLayout;//ï¿½ß½ç²¼ï¿½ï¿½
+import java.awt.BasicStroke;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+import java.awt.event.ActionListener;//ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ 
+import java.awt.event.ActionEvent; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 //
-//import com.mr.util.FrameGetShape;//»ñÈ¡Í¼ĞÎµÄ½Ó¿Ú
-//import com.mr.util.ShapeWindow;//Ñ¡ÔñÍ¼ĞÎµÄ½çÃæ
-//import com.mr.util.Shapes;//±íÊ¾¿ÉÒÔÑ¡ÔñµÄÍ¼ĞÎ
-import java.awt.AlphaComposite;//Í¸Ã÷Ğ§¹û
-import java.awt.Font;//×ÖÌåÀà
+//import com.mr.util.FrameGetShape;//ï¿½ï¿½È¡Í¼ï¿½ÎµÄ½Ó¿ï¿½
+//import com.mr.util.ShapeWindow;//Ñ¡ï¿½ï¿½Í¼ï¿½ÎµÄ½ï¿½ï¿½ï¿½
+//import com.mr.util.Shapes;//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
+import java.awt.AlphaComposite;//Í¸ï¿½ï¿½Ğ§ï¿½ï¿½
+import java.awt.Font;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Cursor;
 import java.awt.Point;
 
-//°´Å¥×é
-//°´Å¥Àà
-//¿ÉÒÔÏÔÊ¾×´Ì¬µÄ°´Å¥
-//¹¤¾ßÀ¸
-//Ğ¡¶Ô»°¿ò
+import javax.imageio.ImageIO;
+//ï¿½ï¿½Å¥ï¿½ï¿½
+//ï¿½ï¿½Å¥ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾×´Ì¬ï¿½Ä°ï¿½Å¥
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//Ğ¡ï¿½Ô»ï¿½ï¿½ï¿½
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.*;
 
 public class DrawingBoard extends JFrame {// implements FrameGetShape{
-		BufferedImage image = new BufferedImage( 570, 390, BufferedImage.TYPE_INT_BGR);//Í¼Æ¬´óĞ¡ ÀàĞÍ
-		Graphics gs = image.getGraphics();//»ñµÃÍ¼ÏñµÄ»æÖÆÍ¼Ïñ
-		Graphics2D g = (Graphics2D) gs;//½«»æÖÆÍ¼Ïñ×ª»»ÎªGraphics2D;
-		DrawPictureCanvas canvas = new DrawPictureCanvas();//´´½¨»­²¼¶ÔÏó
+		BufferedImage image = new BufferedImage( 570, 390, BufferedImage.TYPE_INT_BGR);//Í¼Æ¬ï¿½ï¿½Ğ¡ ï¿½ï¿½ï¿½ï¿½
+		Graphics gs = image.getGraphics();//ï¿½ï¿½ï¿½Í¼ï¿½ï¿½Ä»ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
+		Graphics2D g = (Graphics2D) gs;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½×ªï¿½ï¿½ÎªGraphics2D;
+		DrawPictureCanvas canvas = new DrawPictureCanvas();//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		BufferedImage image2 = new BufferedImage( 570, 390, BufferedImage.TYPE_INT_BGR);
 		
-		//Êó±ê»æÖÆµãºá×İ×ø±ê
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int x1;
 		int y1;
 		int x2;
@@ -81,11 +87,18 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 		private JButton btnFc;
 		private JTextPane textPane;
 
-		Color foregroundColor = Color.BLACK;// Ç°¾°É«
-		Color backgroundColor = Color.WHITE;// ±³¾°É«
+		Color foregroundColor = Color.BLACK;// Ç°ï¿½ï¿½É«
+		Color backgroundColor = Color.WHITE;// ï¿½ï¿½ï¿½ï¿½É«
 		private String keyword = "pencil"; // ×´Ì¬
-		private int pixel_size = 1; // Ïß´Ö
-		private boolean fill = false; // ÊÇ·ñÌî³ä
+		private int pixel_size = 1; // ï¿½ß´ï¿½
+		private boolean fill = false; // ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
+		
+		int hasSaved = 0;
+	    String path=null;
+		int type = 0;
+		int type2 =0 ;
+		String path2=null;
+		int secondSaved=0;
 		
 		public  DrawingBoard() {
 			setResizable(false);
@@ -93,11 +106,25 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 			setTitle("DrawingBoard");
 			init();
+			publicInit();
+			addListener();
+		}
+		
+		public  DrawingBoard(BufferedImage image2,int hasSaved,int type2,String path) {
+			setResizable(false);
+			setBounds( 500, 100, 574, 460);
+			setDefaultCloseOperation(EXIT_ON_CLOSE);
+			setTitle("ç”»å›¾ç¨‹åº ");
+			this.hasSaved=hasSaved;
+			this.type=type2;
+			this.path=path;
+			init2(image2);
+			publicInit();
 			addListener();
 		}
 		
 		private  void addListener() {
-			//»­°å Êó±êµã»÷ÊÂ¼ş¼àÌı
+			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 			canvas.addMouseListener(new MouseAdapter(){
 				public void mousePressed(final MouseEvent e)
 				{
@@ -109,7 +136,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 				}
 			});
 			
-			//»­°å Êó±êÊÍ·ÅÊÂ¼ş¼àÌı
+			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 			canvas.addMouseListener(new MouseAdapter(){
 				public void mouseReleased(final MouseEvent e){
 					x = -1;
@@ -199,10 +226,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 				}
 			});
 			
-			//»­°å Êó±êÊÂ¼ş¼àÌı
+			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 			canvas.addMouseMotionListener(new MouseMotionAdapter()
 			{
-				public void mouseDragged(final MouseEvent e) //ÍÏ×§Êó±ê
+				public void mouseDragged(final MouseEvent e) //ï¿½ï¿½×§ï¿½ï¿½ï¿½
 				{
 					if(x > 0 && y > 0){
 						if(keyword=="rubber")
@@ -221,15 +248,15 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 					canvas.repaint();
 				}
 			
-				//»­°å Êó±êÒÆ¶¯ÊÂ¼ş¼àÌı
-				public void mouseMoved(final MouseEvent event){//µ±Êó±êÒÆ¶¯Ê±
+				//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
+				public void mouseMoved(final MouseEvent event){//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½Ê±
 					if(keyword=="rubber")
 					{
 						setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));					
 					}
 					else if(keyword=="pencil")
 					{
-						setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));//Ê®×Ö¼Ü
+						setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));//Ê®ï¿½Ö¼ï¿½
 					}
 					
 				}
@@ -238,41 +265,192 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 		
 		toolBar.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseMoved(MouseEvent e) {
-				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));//Ä¬ÈÏ¹â±ê
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));//Ä¬ï¿½Ï¹ï¿½ï¿½
 			}
 		});
 		
 
 		
-		// ¡°ĞÂ½¨¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				DrawingBoard drawingBoard = new DrawingBoard();
+				drawingBoard.setVisible(true);
+				drawingBoard.setDefaultCloseOperation(2);
 				System.out.println("new");
 			}
 		});
 		
-		// ¡°´ò¿ª¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ò¿ª¡ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				try {
+				    JFileChooser fileOpenChooser = new JFileChooser("Open a file");
+	        		int returnVal = fileOpenChooser.showOpenDialog(fileOpenChooser);
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+						File fileToOpen = fileOpenChooser.getSelectedFile();
+						String fileName = fileToOpen.getAbsolutePath().toLowerCase();
+						 path2 =fileToOpen.getAbsolutePath();
+						if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg" )||
+								fileName.endsWith(".png")) {
+							if(fileName.endsWith(".jpeg")) type2=1;
+							if(fileName.endsWith(".jpg")) type2=2;
+							if(fileName.endsWith(".png")) type2=3;
+							image2=ImageIO.read(fileToOpen);
+							DrawingBoard pic2=new DrawingBoard(image2,1,type2,path2);
+							pic2.hasSaved =1;
+						    pic2.setVisible(true);
+						    pic2.setDefaultCloseOperation(2);
+						}else {
+							JOptionPane.showMessageDialog(null, "Please choose valid image!");								
+						} 	
+					}		
+				
+				   
+				 }
+			 catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 				System.out.println("open");
 			}
 		});
 		
-		// ¡°±£´æ¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½ï¿½æ¡± ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (DrawingBoard.this.hasSaved == 0) {
+					 try {
+						  
+					        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
+				            Graphics g = awtImage.getGraphics();
+				            canvas.printAll(g);   
+					        JFileChooser fileSaveChooser = new JFileChooser("Save a file");
+							FileNameExtensionFilter filter = new FileNameExtensionFilter("JPEG", "jpeg");						
+							fileSaveChooser.setFileFilter(filter);
+							fileSaveChooser.addChoosableFileFilter(new 
+									FileNameExtensionFilter("PNG","png"));
+							fileSaveChooser.addChoosableFileFilter(new 
+									FileNameExtensionFilter("JPG","jpg"));
+							int returnVal = fileSaveChooser.showSaveDialog(fileSaveChooser);
+							if (returnVal == JFileChooser.APPROVE_OPTION) {
+							    File fileToSave = fileSaveChooser.getSelectedFile();
+								String ends = fileSaveChooser.getFileFilter().getDescription();
+								ends = ends.toLowerCase();
+								if(ends.equals("jpeg")) type=1;
+								if(ends.equals("jpg")) type=2;
+								if(ends.equals("png")) type=3;
+								String fileName = fileToSave.getAbsolutePath().toLowerCase();
+								DrawingBoard.this.hasSaved = 1;
+								/*
+								 * If the user does not put extension at the end of the file name,
+								 * automatically create one.
+								 */
+								if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg" )||
+										fileName.endsWith(".png")) {								 
+									ImageIO.write( awtImage,ends,fileToSave);
+									path = fileToSave.getAbsolutePath();
+								} else {
+									File newFile =new File(fileToSave.getAbsolutePath() + "." + ends);
+									ImageIO.write( awtImage,ends,newFile);
+									path = newFile.getAbsolutePath();
+								}
+							}
+					          
+					    } 
+					    catch(IOException e1){
+							System.out.println("Problems reading.");
+						}
+				}
+		// if this file has been saved once. execute the following code
+		      if(DrawingBoard.this.hasSaved ==1 ) {
+			        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
+		            Graphics g = awtImage.getGraphics();
+		            canvas.printAll(g);
+		    	       if(type == 1)
+						try {
+						
+							ImageIO.write(awtImage,"jpeg",new File(path));
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+		    	        if(type == 2)
+						try {
+							
+							ImageIO.write(awtImage,"jpg",new File(path));
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+		    	       if(type == 3)
+						try {
+							 
+							ImageIO.write(awtImage,"png",new File(path));
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+				}
+		      }		
 				System.out.println("save");
 			}
 		});
 		
-		// ¡°Áí´æÎª¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnSaveas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				Point p = new Point(0, 0);
+			    SwingUtilities.convertPointToScreen(p, canvas);    
+
+			    /*
+			     * Try to screenShot the current image on the canvas and save it as jpg or png.
+			     * Catch possible extensions such as AWTException or file exceptions.
+			     */
+			    try {
+			        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
+			        Graphics g = awtImage.getGraphics();
+			        canvas.printAll(g);
+			        
+			        JFileChooser fileSaveChooser = new JFileChooser("Save a file");
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("JPEG", "jpeg");						
+					fileSaveChooser.setFileFilter(filter);
+					fileSaveChooser.addChoosableFileFilter(new 
+							FileNameExtensionFilter("PNG","png"));
+					fileSaveChooser.addChoosableFileFilter(new 
+							FileNameExtensionFilter("JPG","jpg"));
+
+					int returnVal = fileSaveChooser.showSaveDialog(fileSaveChooser);
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+					    File fileToSave = fileSaveChooser.getSelectedFile();
+						String ends = fileSaveChooser.getFileFilter().getDescription();
+						ends = ends.toLowerCase();
+						String fileName = fileToSave.getAbsolutePath().toLowerCase();
+						
+						/*
+						 * If the user does not put extension at the end of the file name,
+						 * automatically create one.
+						 */
+						if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg" )||
+								fileName.endsWith(".png")) {								 
+							ImageIO.write( awtImage,ends,fileToSave);
+						} else {
+							File newFile =new File(fileToSave.getAbsolutePath() + "." + ends);
+							ImageIO.write( awtImage,ends,newFile);
+						}
+					}
+			        
+			    } 
+			    catch(IOException e1){
+					System.out.println("Problems reading.");
+				}
 				System.out.println("save as");
 			}
 		});
 		
-		// ¡°Ç¦±Ê¡± °´Å¥¼àÌı
+		// ï¿½ï¿½Ç¦ï¿½Ê¡ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnDraw.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "pencil";
@@ -280,7 +458,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ¡°ÏğÆ¤¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnErase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "rubber";
@@ -288,7 +466,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ¡°ĞÎ×´¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½×´ï¿½ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnShapes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				shapesMenu.show(btnShapes,0+btnShapes.getWidth(),0);
@@ -296,7 +474,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ¡°ĞÎ×´-Ö±Ïß¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½×´-Ö±ï¿½ß¡ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		itemLine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "line";
@@ -304,7 +482,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ¡°ĞÎ×´-ÍÖÔ²¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½×´-ï¿½ï¿½Ô²ï¿½ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		itemOval.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "oval";
@@ -312,7 +490,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ¡°ĞÎ×´-Ô²ĞÎ¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½×´-Ô²ï¿½Î¡ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		itemCircle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "circle";
@@ -320,7 +498,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ¡°ĞÎ×´-¾ØĞÎ¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½×´-ï¿½ï¿½ï¿½Î¡ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		itemRectangle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "rectangle";
@@ -328,7 +506,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ¡°ĞÎ×´-Õı·½ĞÎ¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½×´-ï¿½ï¿½ï¿½ï¿½ï¿½Î¡ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		itemSquare.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "square";
@@ -336,7 +514,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ¡°Çå³ı¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				g.setColor(backgroundColor);
@@ -346,7 +524,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ¡°Ìî³ä¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½ä¡± ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnFill.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(fill)
@@ -365,35 +543,35 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 		});
 		
 		
-		// ¡°±³¾°ÑÕÉ«¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnBc.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new JColorChooser();
 				Color bgColor = JColorChooser.showDialog(DrawingBoard.this,"Color", Color.CYAN);
 				if(bgColor != null){
-					backgroundColor = bgColor;//Èç¹ûÑ¡ÔñÑÕÉ«·Ç¿Õ¾Í°ÑËü¸³Öµ¸ø±³¾°ÑÕÉ«
+					backgroundColor = bgColor;//ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½É«ï¿½Ç¿Õ¾Í°ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«
 				}
-				//°Ñ°´Å¥Ò²ÉèÖÃÎªÕâÖÖÑÕÉ«
+				//ï¿½Ñ°ï¿½Å¥Ò²ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«
 				btnBc.setBackground(backgroundColor);
 			}
 		});
 		
-		// ¡°Ç°¾°ÑÕÉ«¡± °´Å¥¼àÌı
+		// ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnFc.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new JColorChooser();
 				Color fgColor = JColorChooser.showDialog(DrawingBoard.this,"Color", Color.CYAN);
 				if(fgColor != null){
-					foregroundColor = fgColor;//Èç¹ûÑ¡ÔñÑÕÉ«·Ç¿Õ¾Í°ÑËü¸³Öµ¸ø±³¾°ÑÕÉ«
+					foregroundColor = fgColor;//ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½É«ï¿½Ç¿Õ¾Í°ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«
 				}
-				//°Ñ°´Å¥Ò²ÉèÖÃÎªÕâÖÖÑÕÉ«
+				//ï¿½Ñ°ï¿½Å¥Ò²ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«
 				btnFc.setBackground(foregroundColor);
 			}
 		});
 		
-		// ¡°Ïß´Ö¡± °´Å¥¼àÌı
+		// ï¿½ï¿½ï¿½ß´Ö¡ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 		btnPixelSize.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -403,16 +581,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 		
 		}
 		
-		public void init()
+		public void publicInit()
 		{
-			g.setColor(backgroundColor);//ÉèÖÃ»­±ÊÑÕÉ«
-			g.fillRect(0, 0, 570, 390);//ÓÃ»­±ÊÌî³ä
-			g.setColor(foregroundColor);//ÉèÖÃ»­±ÊÑÕÉ«
-			canvas.setImage(image);//ÉèÖÃ»­²¼ÑÕÉ«
-			Container s = getContentPane();
-			s.add(canvas);
 			
-			// ×ó²à²Ëµ¥
+			// ï¿½ï¿½ï¿½Ëµï¿½
 			toolBar = new JToolBar();
 			toolBar.setFloatable(false);
 			toolBar.setOrientation(SwingConstants.VERTICAL);
@@ -420,81 +592,81 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			getContentPane().add(toolBar, BorderLayout.WEST);
 			toolBar.addSeparator();
 			
-			// ¡°ĞÂ½¨¡± °´Å¥
+			// ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¥
 			btnNew = new JButton();
 			btnNew.setBackground(Color.WHITE);
 			btnNew.setToolTipText("New file");
 			btnNew.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnNew_16.png")));
 			toolBar.add(btnNew);
-			// ¡°´ò¿ª¡± °´Å¥
+			// ï¿½ï¿½ï¿½ò¿ª¡ï¿½ ï¿½ï¿½Å¥
 			btnOpen = new JButton();
 			btnOpen.setBackground(Color.WHITE);
 			btnOpen.setToolTipText("Open file");
 			btnOpen.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnOpen_16.png")));
 			toolBar.add(btnOpen);
-			// ¡°±£´æ¡± °´Å¥
+			// ï¿½ï¿½ï¿½ï¿½ï¿½æ¡± ï¿½ï¿½Å¥
 			btnSave = new JButton();
 			btnSave.setBackground(Color.WHITE);
 			btnSave.setToolTipText("Save file");
 			btnSave.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnSave_16.png")));
 			toolBar.add(btnSave);
-			// ¡°Áí´æÎª¡± °´Å¥
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ ï¿½ï¿½Å¥
 			btnSaveas = new JButton();
 			btnSaveas.setBackground(Color.WHITE);
 			btnSaveas.setToolTipText("Save file as");
 			btnSaveas.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnSaveas_16.png")));
 			toolBar.add(btnSaveas);
-			// ·Ö½ç
+			// ï¿½Ö½ï¿½
 			toolBar.addSeparator();
-			// ¡°Ç¦±Ê¡± °´Å¥£¨×ÔÓÉ»æ»­£©
+			// ï¿½ï¿½Ç¦ï¿½Ê¡ï¿½ ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½É»æ»­ï¿½ï¿½
 			btnDraw = new JButton();
 			btnDraw.setBackground(Color.WHITE);
 			btnDraw.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnDraw_16.png")));
 			btnDraw.setToolTipText("Pencil");
 			toolBar.add(btnDraw);
-			// ¡°ÏğÆ¤¡± °´Å¥
+			// ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ ï¿½ï¿½Å¥
 			btnErase = new JButton();
 			btnErase.setBackground(Color.WHITE);
 			btnErase.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnEraser_16.png")));
 			btnErase.setToolTipText("Rubber");
 			toolBar.add(btnErase);
 			
-			// ¡°ĞÎ×´¡± ²Ëµ¥
+			// ï¿½ï¿½ï¿½ï¿½×´ï¿½ï¿½ ï¿½Ëµï¿½
 			shapesMenu = new JPopupMenu();
 			shapesMenu.setBackground(Color.WHITE);
-			// ¡°Ö±Ïß¡± °´Å¥
+			// ï¿½ï¿½Ö±ï¿½ß¡ï¿½ ï¿½ï¿½Å¥
 			itemLine = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/line_16.png")));
 			itemLine.setToolTipText("Line");
 			itemLine.setBackground(Color.WHITE);
 			shapesMenu.add(itemLine);
-			// ¡°Ô²ĞÎ¡± °´Å¥
+			// ï¿½ï¿½Ô²ï¿½Î¡ï¿½ ï¿½ï¿½Å¥
 			itemCircle = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/circle_16.png")));
 			itemCircle.setToolTipText("Circle");
 			itemCircle.setBackground(Color.WHITE);
 			shapesMenu.add(itemCircle);
-			// ¡°ÍÖÔ²¡± °´Å¥
+			// ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ ï¿½ï¿½Å¥
 			itemOval = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/oval_16.png")));
 			itemOval.setToolTipText("Oval");
 			itemOval.setBackground(Color.WHITE);
 			shapesMenu.add(itemOval);
-			// ¡°Õı·½ĞÎ¡± °´Å¥
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¡ï¿½ ï¿½ï¿½Å¥
 			itemSquare = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/square_16.png")));
 			itemSquare.setToolTipText("Square");
 			itemSquare.setBackground(Color.WHITE);
 			shapesMenu.add(itemSquare);
-			// ¡°¾ØĞÎ¡± °´Å¥
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Î¡ï¿½ ï¿½ï¿½Å¥
 			itemRectangle = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/rectangle_16.png")));
 			itemRectangle.setToolTipText("Rectangle");
 			itemRectangle.setBackground(Color.WHITE);
 			shapesMenu.add(itemRectangle);
-			// ¡°ĞÎ×´¡± °´Å¥
+			// ï¿½ï¿½ï¿½ï¿½×´ï¿½ï¿½ ï¿½ï¿½Å¥
 			btnShapes = new JButton();
 			btnShapes.setBackground(Color.WHITE);
 			btnShapes.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnShapes_16.png")));
 			btnShapes.setToolTipText("Shapes");
 			toolBar.add(btnShapes);
 			toolBar.addSeparator();
-			// ¡°Ïß´Ö¡± ²Ëµ¥
+			// ï¿½ï¿½ï¿½ß´Ö¡ï¿½ ï¿½Ëµï¿½
 			pixelsizeMenu = new JPopupMenu();
 			pixelsizeMenu.setBackground(Color.WHITE);
 			String[] strlistPixelsize = { "  1px", "  3px", "  5px", "  7px", "  9px", "12px"};
@@ -516,32 +688,32 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 				pixelsizeMenu.add(itemPixelsize);
 			}
 
-			// ¡°Çå³ı¡± °´Å¥
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¥
 			btnClear = new JButton();
 			btnClear.setToolTipText("Clear");
 			btnClear.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/clear_16.png")));
 			btnClear.setBackground(Color.WHITE);
 			toolBar.add(btnClear);
-			// ¡°Ìî³ä¡± °´Å¥
+			// ï¿½ï¿½ï¿½ï¿½ä¡± ï¿½ï¿½Å¥
 			btnFill = new JButton();
 			btnFill.setBackground(Color.WHITE);
 			btnFill.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/notfill_16.png")));
 			toolBar.add(btnFill);
-			// ¡°Ïß´Ö¡± °´Å¥
+			// ï¿½ï¿½ï¿½ß´Ö¡ï¿½ ï¿½ï¿½Å¥
 			btnPixelSize = new JButton();
 			btnPixelSize.setFont(new Font("Bahnschrift", Font.PLAIN, 12));
 			btnPixelSize.setToolTipText("Pixel size");
 			btnPixelSize.setText("  1px");
 			btnPixelSize.setBackground(Color.WHITE);
 			toolBar.add(btnPixelSize);
-			// ·Ö½ç
+			// ï¿½Ö½ï¿½
 			toolBar.addSeparator();
-			// ¡°±³¾°ÑÕÉ«¡± °´Å¥
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ ï¿½ï¿½Å¥
 			btnBc = new JButton();
 			btnBc.setBackground(backgroundColor);
 			btnBc.setToolTipText("Background Color");
 			toolBar.add(btnBc);
-			// ¡°Ç°¾°ÑÕÉ«¡± °´Å¥
+			// ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ ï¿½ï¿½Å¥
 			btnFc = new JButton();
 			btnFc.setBackground(foregroundColor);
 			btnBc.setToolTipText("Foreground Color");
@@ -553,6 +725,25 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			textPane.setText("pencil");
 		}
 		
+		public void init() {
+			g.setColor(backgroundColor);//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½É«
+			g.fillRect(0, 0, 570, 390);//ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			g.setColor(foregroundColor);//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½É«
+			canvas.setImage(image);//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½É«
+			Container s = getContentPane();
+			s.add(canvas);
+		}
+		
+		public void init2(BufferedImage image2) {
+			gs = image2.getGraphics();//è·å¾—å›¾åƒçš„ç»˜åˆ¶å›¾åƒ
+			g = (Graphics2D) gs;
+			g.setColor(backgroundColor);//è®¾ç½®ç”»ç¬”é¢œè‰²
+//			g.fillRect(0, 0, 570, 390);//ç”¨ç”»ç¬”å¡«å……
+			g.setColor(foregroundColor);//è®¾ç½®ç”»ç¬”é¢œè‰²
+			canvas.setImage(image2);//è®¾ç½®ç”»å¸ƒ
+			Container s = getContentPane();
+			s.add(canvas);
+		}
 		
 		public static void main(String[] args) {
 			new DrawingBoard().setVisible(true);
