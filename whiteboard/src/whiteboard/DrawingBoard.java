@@ -19,42 +19,38 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 
 
-import java.awt.BorderLayout;//�߽粼��
-import java.awt.BasicStroke;//��������
-import java.awt.event.ActionListener;//�����¼� 
-import java.awt.event.ActionEvent; //��������
+import java.awt.BorderLayout;
+import java.awt.BasicStroke;
+import java.awt.event.ActionListener; 
+import java.awt.event.ActionEvent; 
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-//
-//import com.mr.util.FrameGetShape;//��ȡͼ�εĽӿ�
-//import com.mr.util.ShapeWindow;//ѡ��ͼ�εĽ���
-//import com.mr.util.Shapes;//��ʾ����ѡ���ͼ��
-import java.awt.AlphaComposite;//͸��Ч��
-import java.awt.Font;//������
+
+import java.awt.AlphaComposite;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Cursor;
 import java.awt.Point;
 
 import javax.imageio.ImageIO;
-//��ť��
-//��ť��
-//������ʾ״̬�İ�ť
-//������
-//С�Ի���
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.*;
 
-public class DrawingBoard extends JFrame {// implements FrameGetShape{
-		BufferedImage image = new BufferedImage( 570, 390, BufferedImage.TYPE_INT_BGR);//ͼƬ��С ����
-		Graphics gs = image.getGraphics();//���ͼ��Ļ���ͼ��
-		Graphics2D g = (Graphics2D) gs;//������ͼ��ת��ΪGraphics2D;
-		DrawPictureCanvas canvas = new DrawPictureCanvas();//������������
-		BufferedImage image2 = new BufferedImage( 570, 390, BufferedImage.TYPE_INT_BGR);
+public class DrawingBoard extends JFrame {
+		// Canvas configuration
+		int canvasWidth = 570;
+		int canvasHeight = 410;
+		BufferedImage image = new BufferedImage( canvasWidth, canvasHeight, BufferedImage.TYPE_INT_BGR);// Size and type of the image
+		Graphics gs = image.getGraphics();
+		Graphics2D g = (Graphics2D) gs;
+		DrawPictureCanvas canvas = new DrawPictureCanvas();
+		BufferedImage image2 = new BufferedImage( canvasWidth, canvasHeight, BufferedImage.TYPE_INT_BGR);
 		
-		//�����Ƶ��������
+		
+		// Mouse action coordinates initialization
 		int x1;
 		int y1;
 		int x2;
@@ -62,8 +58,8 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 		int x = -1;
 		int y = -1;
 		
+		// Components
 		private JToolBar toolBar;
-
 		private JButton btnNew;
 		private JButton btnOpen;
 		private JButton btnSave;
@@ -87,11 +83,12 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 		private JButton btnFc;
 		private JTextPane textPane;
 
-		Color foregroundColor = Color.BLACK;// ǰ��ɫ
-		Color backgroundColor = Color.WHITE;// ����ɫ
-		private String keyword = "pencil"; // ״̬
-		private int pixel_size = 1; // �ߴ�
-		private boolean fill = false; // �Ƿ����
+		// Initial parameters
+		Color foregroundColor = Color.BLACK;
+		Color backgroundColor = Color.WHITE;
+		private String keyword = "pencil"; 
+		private int pixel_size = 1; 
+		private boolean fill = false;
 		
 		int hasSaved = 0;
 	    String path=null;
@@ -114,7 +111,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			setResizable(false);
 			setBounds( 500, 100, 574, 460);
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
-			setTitle("画图程序 ");
+			setTitle("WhiteBoard");
 			this.hasSaved=hasSaved;
 			this.type=type2;
 			this.path=path;
@@ -124,19 +121,18 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 		}
 		
 		private  void addListener() {
-			//���� ������¼�����
+			// Canvas-Mouse pressed action listener
+			// Record the coordinates when the mouse is pressed. 
 			canvas.addMouseListener(new MouseAdapter(){
 				public void mousePressed(final MouseEvent e)
 				{
 					x1 = e.getX();
 					y1 = e.getY();
-					System.out.println("Pressed");
-					System.out.println(x1);
-					System.out.println(y1);
 				}
 			});
 			
-			//���� ����ͷ��¼�����
+			// Canvas-Mouse release action listener
+			// When the mouse is released, draw corresponding objects.
 			canvas.addMouseListener(new MouseAdapter(){
 				public void mouseReleased(final MouseEvent e){
 					x = -1;
@@ -226,16 +222,17 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 				}
 			});
 			
-			//���� ����¼�����
+			// Canvas-Mouse action listener
 			canvas.addMouseMotionListener(new MouseMotionAdapter()
 			{
-				public void mouseDragged(final MouseEvent e) //��ק���
+				// Drag the mouse to draw specific objects.
+				public void mouseDragged(final MouseEvent e)
 				{
 					if(x > 0 && y > 0){
 						if(keyword=="rubber")
 						{
 							g.setColor(backgroundColor);
-							g.fillOval(x, y, pixel_size, pixel_size);
+							g.fillRect(x, y, pixel_size, pixel_size);
 						}
 						else if(keyword=="pencil")
 						{
@@ -248,15 +245,15 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 					canvas.repaint();
 				}
 			
-				//���� ����ƶ��¼�����
-				public void mouseMoved(final MouseEvent event){//������ƶ�ʱ
+				// Set the cursor when the mouse is moving on the canvas.
+				public void mouseMoved(final MouseEvent event){
 					if(keyword=="rubber")
 					{
 						setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));					
 					}
 					else if(keyword=="pencil")
 					{
-						setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));//ʮ�ּ�
+						setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 					}
 					
 				}
@@ -265,13 +262,13 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 		
 		toolBar.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseMoved(MouseEvent e) {
-				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));//Ĭ�Ϲ��
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		});
 		
 
 		
-		// ���½��� ��ť����
+		// "New" button listener
 		btnNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DrawingBoard drawingBoard = new DrawingBoard();
@@ -281,7 +278,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ���򿪡� ��ť����
+		// "Open" button listener
 		btnOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -309,17 +306,15 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 				   
 				 }
 			 catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 				System.out.println("open");
 			}
 		});
 		
-		// �����桱 ��ť����
+		// "Save" button listener
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (DrawingBoard.this.hasSaved == 0) {
@@ -399,7 +394,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// �����Ϊ�� ��ť����
+		// "Saveas" button listener
 		btnSaveas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Point p = new Point(0, 0);
@@ -450,7 +445,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ��Ǧ�ʡ� ��ť����
+		// "Pencil" button listener
 		btnDraw.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "pencil";
@@ -458,7 +453,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ����Ƥ�� ��ť����
+		// "Rubber" button listener
 		btnErase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "rubber";
@@ -466,7 +461,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ����״�� ��ť����
+		// "New" button listener
 		btnShapes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				shapesMenu.show(btnShapes,0+btnShapes.getWidth(),0);
@@ -474,7 +469,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ����״-ֱ�ߡ� ��ť����
+		// "Line" button listener
 		itemLine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "line";
@@ -482,7 +477,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ����״-��Բ�� ��ť����
+		// "Oval" button listener
 		itemOval.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "oval";
@@ -490,7 +485,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ����״-Բ�Ρ� ��ť����
+		// "Circle" button listener
 		itemCircle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "circle";
@@ -498,7 +493,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ����״-���Ρ� ��ť����
+		// "Rectangle" button listener
 		itemRectangle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "rectangle";
@@ -506,7 +501,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ����״-�����Ρ� ��ť����
+		// "Square" button listener
 		itemSquare.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				keyword = "square";
@@ -514,7 +509,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ������� ��ť����
+		/// "Clear" button listener
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				g.setColor(backgroundColor);
@@ -524,7 +519,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			}
 		});
 		
-		// ����䡱 ��ť����
+		// "Fill in color" button listener
 		btnFill.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(fill)
@@ -543,35 +538,35 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 		});
 		
 		
-		// ��������ɫ�� ��ť����
+		// "Background Color" button listener
 		btnBc.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new JColorChooser();
 				Color bgColor = JColorChooser.showDialog(DrawingBoard.this,"Color", Color.CYAN);
 				if(bgColor != null){
-					backgroundColor = bgColor;//���ѡ����ɫ�ǿվͰ�����ֵ��������ɫ
+					backgroundColor = bgColor;// if the color selected is not null
 				}
-				//�Ѱ�ťҲ����Ϊ������ɫ
+				// set this color as the background of the button
 				btnBc.setBackground(backgroundColor);
 			}
 		});
 		
-		// ��ǰ����ɫ�� ��ť����
+		// "Foreground Color" button listener
 		btnFc.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new JColorChooser();
 				Color fgColor = JColorChooser.showDialog(DrawingBoard.this,"Color", Color.CYAN);
 				if(fgColor != null){
-					foregroundColor = fgColor;//���ѡ����ɫ�ǿվͰ�����ֵ��������ɫ
+					foregroundColor = fgColor; // if the color selected is not null
 				}
-				//�Ѱ�ťҲ����Ϊ������ɫ
+				// set this color as the background of the button
 				btnFc.setBackground(foregroundColor);
 			}
 		});
 		
-		// ���ߴ֡� ��ť����
+		// "Pixel Size" button listener
 		btnPixelSize.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -581,10 +576,11 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 		
 		}
 		
+
 		public void publicInit()
 		{
 			
-			// ���˵�
+			// Left Tool Bar
 			toolBar = new JToolBar();
 			toolBar.setFloatable(false);
 			toolBar.setOrientation(SwingConstants.VERTICAL);
@@ -592,81 +588,82 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 			getContentPane().add(toolBar, BorderLayout.WEST);
 			toolBar.addSeparator();
 			
-			// ���½��� ��ť
+			// New
 			btnNew = new JButton();
 			btnNew.setBackground(Color.WHITE);
 			btnNew.setToolTipText("New file");
 			btnNew.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnNew_16.png")));
 			toolBar.add(btnNew);
-			// ���򿪡� ��ť
+			// Open
 			btnOpen = new JButton();
 			btnOpen.setBackground(Color.WHITE);
 			btnOpen.setToolTipText("Open file");
 			btnOpen.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnOpen_16.png")));
 			toolBar.add(btnOpen);
-			// �����桱 ��ť
+			// Save
 			btnSave = new JButton();
 			btnSave.setBackground(Color.WHITE);
 			btnSave.setToolTipText("Save file");
 			btnSave.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnSave_16.png")));
 			toolBar.add(btnSave);
-			// �����Ϊ�� ��ť
+			// Save as
 			btnSaveas = new JButton();
 			btnSaveas.setBackground(Color.WHITE);
 			btnSaveas.setToolTipText("Save file as");
 			btnSaveas.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnSaveas_16.png")));
 			toolBar.add(btnSaveas);
-			// �ֽ�
+			// Separator
 			toolBar.addSeparator();
-			// ��Ǧ�ʡ� ��ť�����ɻ滭��
+			// Pencil(free drawing)
 			btnDraw = new JButton();
 			btnDraw.setBackground(Color.WHITE);
 			btnDraw.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnDraw_16.png")));
 			btnDraw.setToolTipText("Pencil");
 			toolBar.add(btnDraw);
-			// ����Ƥ�� ��ť
+			// Rubber
 			btnErase = new JButton();
 			btnErase.setBackground(Color.WHITE);
 			btnErase.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnEraser_16.png")));
 			btnErase.setToolTipText("Rubber");
 			toolBar.add(btnErase);
 			
-			// ����״�� �˵�
+			// Popup Menu for Shapes
 			shapesMenu = new JPopupMenu();
 			shapesMenu.setBackground(Color.WHITE);
-			// ��ֱ�ߡ� ��ť
+			// item line
 			itemLine = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/line_16.png")));
 			itemLine.setToolTipText("Line");
 			itemLine.setBackground(Color.WHITE);
 			shapesMenu.add(itemLine);
-			// ��Բ�Ρ� ��ť
+			// item circle
 			itemCircle = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/circle_16.png")));
 			itemCircle.setToolTipText("Circle");
 			itemCircle.setBackground(Color.WHITE);
 			shapesMenu.add(itemCircle);
-			// ����Բ�� ��ť
+			// item oval
 			itemOval = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/oval_16.png")));
 			itemOval.setToolTipText("Oval");
 			itemOval.setBackground(Color.WHITE);
 			shapesMenu.add(itemOval);
-			// �������Ρ� ��ť
+			// item square
 			itemSquare = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/square_16.png")));
 			itemSquare.setToolTipText("Square");
 			itemSquare.setBackground(Color.WHITE);
 			shapesMenu.add(itemSquare);
-			// �����Ρ� ��ť
+			// item rectangle
 			itemRectangle = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/rectangle_16.png")));
 			itemRectangle.setToolTipText("Rectangle");
 			itemRectangle.setBackground(Color.WHITE);
 			shapesMenu.add(itemRectangle);
-			// ����״�� ��ť
+			// Shapes
 			btnShapes = new JButton();
 			btnShapes.setBackground(Color.WHITE);
 			btnShapes.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnShapes_16.png")));
 			btnShapes.setToolTipText("Shapes");
 			toolBar.add(btnShapes);
 			toolBar.addSeparator();
-			// ���ߴ֡� �˵�
+			
+			// PopMenu of Pixel size
 			pixelsizeMenu = new JPopupMenu();
 			pixelsizeMenu.setBackground(Color.WHITE);
 			String[] strlistPixelsize = { "  1px", "  3px", "  5px", "  7px", "  9px", "12px"};
@@ -688,59 +685,62 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape{
 				pixelsizeMenu.add(itemPixelsize);
 			}
 
-			// ������� ��ť
+			// Clear
 			btnClear = new JButton();
 			btnClear.setToolTipText("Clear");
 			btnClear.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/clear_16.png")));
 			btnClear.setBackground(Color.WHITE);
 			toolBar.add(btnClear);
-			// ����䡱 ��ť
+			// Fill in Color
 			btnFill = new JButton();
 			btnFill.setBackground(Color.WHITE);
+			btnFill.setToolTipText("Fill in color");
 			btnFill.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/notfill_16.png")));
 			toolBar.add(btnFill);
-			// ���ߴ֡� ��ť
+			// Pixel Size
 			btnPixelSize = new JButton();
 			btnPixelSize.setFont(new Font("Bahnschrift", Font.PLAIN, 12));
 			btnPixelSize.setToolTipText("Pixel size");
 			btnPixelSize.setText("  1px");
 			btnPixelSize.setBackground(Color.WHITE);
 			toolBar.add(btnPixelSize);
-			// �ֽ�
+			// Separater
 			toolBar.addSeparator();
-			// ��������ɫ�� ��ť
+			// BackgroundColor
 			btnBc = new JButton();
 			btnBc.setBackground(backgroundColor);
 			btnBc.setToolTipText("Background Color");
 			toolBar.add(btnBc);
-			// ��ǰ����ɫ�� ��ť
+			// Forground Color
 			btnFc = new JButton();
 			btnFc.setBackground(foregroundColor);
-			btnBc.setToolTipText("Foreground Color");
+			btnFc.setToolTipText("Foreground Color");
 			toolBar.add(btnFc);
-			
+
+			// Condition description text panel
 			textPane = new JTextPane();
 			getContentPane().add(textPane, BorderLayout.SOUTH);
 			textPane.setEditable(false);
 			textPane.setText("pencil");
 		}
 		
+		// Initalize canvas
 		public void init() {
-			g.setColor(backgroundColor);//���û�����ɫ
-			g.fillRect(0, 0, 570, 390);//�û������
-			g.setColor(foregroundColor);//���û�����ɫ
-			canvas.setImage(image);//���û�����ɫ
+			g.setColor(backgroundColor);// set the color for drawing
+			g.fillRect(0, 0, canvasWidth, canvasHeight);//set background
+			g.setColor(foregroundColor);//set the color for drawing
+			canvas.setImage(image);//set background color of canvas
 			Container s = getContentPane();
 			s.add(canvas);
 		}
 		
 		public void init2(BufferedImage image2) {
-			gs = image2.getGraphics();//获得图像的绘制图像
+			gs = image2.getGraphics();
 			g = (Graphics2D) gs;
-			g.setColor(backgroundColor);//设置画笔颜色
-//			g.fillRect(0, 0, 570, 390);//用画笔填充
-			g.setColor(foregroundColor);//设置画笔颜色
-			canvas.setImage(image2);//设置画布
+			g.setColor(backgroundColor);
+//			g.fillRect(0, 0, 570, 390);
+			g.setColor(foregroundColor);
+			canvas.setImage(image2);
 			Container s = getContentPane();
 			s.add(canvas);
 		}
