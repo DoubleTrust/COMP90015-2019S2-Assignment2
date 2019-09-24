@@ -83,7 +83,7 @@ public class RemoteServer {
 			
 			// Check whether there is no error of building RMI and server socket
 			if(isInitiated) {
-				System.out.println("RMI and server socket are initiated.");
+				System.out.println("RMI initiated. Waiting for connection...");
 				// Keep server running
 				while(true);
 			}

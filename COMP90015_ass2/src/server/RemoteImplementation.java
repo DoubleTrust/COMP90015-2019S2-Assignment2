@@ -5,6 +5,7 @@ import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import server.DrawingBoard;
@@ -17,7 +18,7 @@ import remote.RemoteInterface;
 public class RemoteImplementation extends UnicastRemoteObject implements RemoteInterface{
 	
 	private ArrayList<String> clientInfo;
-	private DrawingBoard canvas;
+	private DrawingBoard drawingBoard;
 	
 	/** 
 	 * Default constructor 
@@ -27,56 +28,65 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	}
 	
 	/** 
-	 * Constructor with client's username
+	 * Implementation of recording the client's username
 	 */
-	protected RemoteImplementation(String username) throws RemoteException {
+	@Override
+	public void RecordUserInfo(String username) throws RemoteException {
 		this.clientInfo.add(username);
 	}
 	
 	/** 
-	 * Return the client info
+	 * Implementation of removing the client's username
 	 */
+	@Override
+	public void RemoveClient(String username) throws RemoteException {
+		this.clientInfo.remove(username);
+	}
+	
+	/** 
+	 * Implementation of returning the client info
+	 */
+	@Override
 	public ArrayList<String> getUserInfo() {
 		return this.clientInfo;
 	}
-
 	
-	
-	
+	/** 
+	 * Implementation of creating the white board
+	 */
 	@Override
-	public void openCanvas() throws RemoteException{
-		// Determine whether the canvas is created before
-		System.out.println("test");
-		if(this.canvas == null) {
+	public boolean createWhiteBoard() throws RemoteException{
+		
+		// Determine whether the canvas has been created before
+		if(this.drawingBoard == null) {
 			// Create a new canvas
-			this.canvas= new DrawingBoard();
-			canvas.setAlwaysOnTop(true);
-			
-			// Confirm exit if the user wants to quit
-			canvas.addWindowListener(new java.awt.event.WindowAdapter() {
-			    @Override
-			    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-			        if (JOptionPane.showConfirmDialog(canvas, 
-			            "Are you sure you want to close this window? \nYou can open it again by clicking 'Open Canvas'.", "Close Window?", 
-			            JOptionPane.YES_NO_OPTION,
-			            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
-			        	canvas.setVisible(false);
-			        }
-			    }
-			});
-			
+			this.drawingBoard= new DrawingBoard();
+				
 			// Set the visibility
-			this.canvas.setVisible(true);
+			this.drawingBoard.setVisible(true);
+			
+			return true;
 		}
 		else {
-			this.canvas.setVisible(true);
+			return false;
 		}			
 	}
+
+	/** 
+	 * Implementation of opening the white board
+	 */
+	@Override
+	public void openWhiteBoard() throws RemoteException{
+		this.drawingBoard.setVisible(true);		
+	}
 	
+	/** 
+	 * Implementation of disposing the white board (manager only)
+	 */
 	@Override
 	public void disposeCanvas() throws RemoteException {
-		this.canvas.dispose();
-		this.canvas = null;
+		this.drawingBoard.dispose();
+		this.drawingBoard = null;
 	}
 
 	

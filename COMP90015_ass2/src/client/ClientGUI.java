@@ -13,6 +13,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * @author Sebastian Yan
@@ -20,14 +22,14 @@ import javax.swing.JTextArea;
  */
 public class ClientGUI {
 	// Define GUI elements
-	private JFrame frame;
+	public JFrame frame;
 	private JLabel titleOfFrame;
-	public static JTextArea dicArea;
+	private Client client;
 	public static JTextArea statusArea;
 	private JPanel panel;
 	private JScrollPane scrollPaneForStatus;
-	private JButton disconnectButton;
-	private JButton openCanvasButton;
+	private JButton createWhiteBoardButton;
+	private JButton openWhiteBoardButton;
 
 	/**
 	 * Launch the application.
@@ -40,6 +42,8 @@ public class ClientGUI {
 				try {
 					ClientGUI window = new ClientGUI();
 					window.frame.setVisible(true);
+					
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -48,29 +52,56 @@ public class ClientGUI {
 	}
 
 	/**
-	 * Create the application.
+	 * Create the application 
 	 */
 	public ClientGUI() {
 		initialize();
+		
 	}
+	
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		// Initialize Client and connect using RMI
-		Client client = new Client();
-		client.buildConnection();
 		
 		// Initialize the frame
 		frame = new JFrame();
-		frame.setBounds(100, 100, 836, 624);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setBounds(100, 100, 476, 629);
+		//frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		
+		// Add a confirm dialog when exiting
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        // Create a confirmDialog for the user
+		    	int choice = JOptionPane.showConfirmDialog(frame, "Are you sure you want to disconnect?", "Warning", JOptionPane.YES_NO_OPTION);
+		         
+		    	// If user wants to quit
+		    	if(choice == JOptionPane.YES_OPTION){
+		        	try {
+						// Disconnect the canvas
+						client.remoteInterface.disposeCanvas();	
+						
+						// Remove the client's username
+						client.remoteInterface.RemoveClient(client.username);	
+						
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
+		        	// Dispose the frame
+		        	frame.dispose();
+	        	}
+		    	else {
+		    		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		    	}
+		    }
+		});		
 
 		// Initialize the panel
 		panel = new JPanel();
-		panel.setBounds(0, 0, 813, 571);
+		panel.setBounds(0, 0, 454, 571);
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
 
@@ -82,7 +113,7 @@ public class ClientGUI {
 
 		// Initialize the scroll bar for status area
 		scrollPaneForStatus = new JScrollPane();
-		scrollPaneForStatus.setBounds(10, 121, 747, 175);
+		scrollPaneForStatus.setBounds(26, 166, 329, 351);
 		panel.add(scrollPaneForStatus);
 
 		// Initialize the area to display connection status
@@ -90,34 +121,36 @@ public class ClientGUI {
 		statusArea.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
 		statusArea.setEditable(false);
 		scrollPaneForStatus.setViewportView(statusArea);
-
-		// 'Open canvas' button
-		openCanvasButton = new JButton("Open Canvas");
-		openCanvasButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
-		openCanvasButton.setBounds(25, 64, 179, 29);
-		panel.add(openCanvasButton);
 		
-		// 'Disconnect' button
-		disconnectButton = new JButton("Disconnect");
-		disconnectButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
-		disconnectButton.setBounds(250, 64, 179, 29);
-		panel.add(disconnectButton);
-		
-		// (Test) title of displaying current amount of the client
-		JLabel clientAmountText = new JLabel("Current client amount:");
-		clientAmountText.setBounds(15, 324, 219, 21);
-		panel.add(clientAmountText);	
-		JLabel clientAmount = new JLabel("0");
-		clientAmount.setBounds(250, 324, 81, 21);
-		panel.add(clientAmount);
+		JLabel userList = new JLabel("User List");
+		userList.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
+		userList.setBounds(26, 131, 219, 34);
+		panel.add(userList);
 
-		// Add listener for 'Open Canvas' button
-		openCanvasButton.addMouseListener(new MouseAdapter() {
+		// 'Create WhiteBoard' button
+		openWhiteBoardButton = new JButton("Open WhiteBoard");
+		openWhiteBoardButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
+		openWhiteBoardButton.setBounds(26, 100, 208, 29);
+		panel.add(openWhiteBoardButton);
+	
+		
+		// 'Open WhiteBoard' button
+		createWhiteBoardButton = new JButton("Create WhiteBoard");
+		createWhiteBoardButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
+		createWhiteBoardButton.setBounds(25, 56, 209, 29);
+		panel.add(createWhiteBoardButton);
+
+		// Add listener for 'Create Canvas' button
+		createWhiteBoardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {			
-				// Open the canvas
+				// Open the white board
 				try {
-					client.remoteInterface.openCanvas();	
+					// If the white board already exists
+					if(!client.remoteInterface.createWhiteBoard()) {
+						JOptionPane.showMessageDialog(null, "White board aleady exists.", "Information", JOptionPane.INFORMATION_MESSAGE);		
+						client.remoteInterface.openWhiteBoard();	
+					}	
 					
 				} catch (RemoteException e) {
 					e.printStackTrace();
@@ -126,20 +159,47 @@ public class ClientGUI {
 		});
 		
 		
-		// Add listener for 'Disconnect' button
-		disconnectButton.addMouseListener(new MouseAdapter() {
+		// Add listener for 'Open Canvas' button
+		openWhiteBoardButton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				// Disconnect the canvas
+			public void mouseClicked(MouseEvent arg0) {			
+				// Open the white board
 				try {
-					client.remoteInterface.disposeCanvas();	
+					client.remoteInterface.openWhiteBoard();	
 					
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
-
 			}
 		});
+		
+		// Initialize Client and connect using RMI
+		/*client = new Client();
+		while(!client.buildConnection()) {
+			JOptionPane.showConfirmDialog(null, "Unable to connect to RMI. Please check your input.", "Error", JOptionPane.WARNING_MESSAGE);
+			client = new Client();
+		}
+		
+		// Display username(s).... Needs while loop? 
+		client.displayUserInfo();*/
 
+	}
+
+	/**
+	 * Create the client
+	 */
+	public boolean initiateClient(String hostname, String port, String username) {
+		client = new Client(hostname, port, username);
+		
+		// Build connection
+		if(!client.buildConnection()) {
+			return false;
+		}
+		else {			
+			// Display username(s).... Needs while loop? 
+			client.displayUserInfo();
+			
+			return true;
+		}
 	}
 }

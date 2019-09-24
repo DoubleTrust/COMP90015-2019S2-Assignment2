@@ -4,6 +4,7 @@ package client;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -19,38 +20,39 @@ public class Client {
 	 */
 	private String host;
 	private String port;
-	private String username;
+	public String username;
 	public RemoteInterface remoteInterface;
 	
 	/** 
 	 * Constructor
 	 */
-	public Client() {
+	public Client(String hostname, String port, String username) {
 		// Get the host name and port number
-		this.host = JOptionPane.showInputDialog(null, "Please type the host name:\n", "Host name required", JOptionPane.PLAIN_MESSAGE);
-		this.port = JOptionPane.showInputDialog(null, "Please type a port number:\n", "Port number required", JOptionPane.PLAIN_MESSAGE);
-		this.username = JOptionPane.showInputDialog(null, "Please type your username:\n", "Username required", JOptionPane.PLAIN_MESSAGE);
-		
-		// Verify the input
-		// code to be added...
+		this.host = hostname;
+		this.port = port;
+		this.username = username;
 		
 	}
 	
 	/**
 	 *  Setting up connection to the server	
 	 */
-	public void buildConnection(){
+	public boolean buildConnection(){
 		try {
 			// Connect to registry using host name and port number
-			Registry registry = LocateRegistry.getRegistry(this.host, Integer.parseInt(this.port));
+			Registry registry = LocateRegistry.getRegistry(this.host.trim().toString(), Integer.parseInt(this.port));
 			
-			//Retrieve the stub/proxy for the remote operation from the registry
-			remoteInterface = (RemoteInterface) registry.lookup("RemoteOperation");
+			// Retrieve the stub/proxy for the remote operation from the registry
+			this.remoteInterface = (RemoteInterface) registry.lookup("RemoteOperation");
 			
+			// Transmit the username to RMI
+			this.remoteInterface.RecordUserInfo(this.username);
+			
+			return true;
 						
 		} catch (Exception e) {			
 			e.printStackTrace();
-			JOptionPane.showConfirmDialog(null, "Error.", "Error", JOptionPane.WARNING_MESSAGE);
+			return false;
 		}
 	}
 	
@@ -58,7 +60,22 @@ public class Client {
      * Display username(s)
      */
 	public void displayUserInfo() {
-		// Similar to auto-update dictionary info
-		
+		// (Similar to auto-update dictionary info)
+		try {
+			// Get user lists
+			ArrayList<String> userList = this.remoteInterface.getUserInfo();
+			
+			// Convert it to String
+			StringBuilder userString = new StringBuilder(); 
+			for(String user: userList) {
+				userString.append(user);
+				userString.append("\n");
+			}
+			
+			ClientGUI.statusArea.setText(userString.toString());
+			
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 }

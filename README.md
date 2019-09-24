@@ -1,7 +1,19 @@
 # COMP90015-2019S2-Assignment2
  墨尔本大学2019年S2分布式系统项目文件
 
+## 程序运行方法
+
+to be added... （需等待小组确认逻辑）
+
 ## 版本迭代
+
+### 2019/09/24
+
+- 新增Client_Connection GUI, 用于方便用户输入hostname, port和username
+- ClientGUI新增显示用户名（无实时更新），新增“Create WhiteBoard”和“Open WhiteBoard”按钮  <u>(需小组商讨设计框架)</u>
+- 更改对应的RMI函数
+- 新增“退出确认”监听行为，用于后台删除用户数据
+- 修复部分BUG（扩大whiteboard，但不完美）
 
 ### 2019/09/23
 

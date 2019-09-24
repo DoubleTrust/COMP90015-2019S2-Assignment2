@@ -2,6 +2,7 @@ package remote;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /**
  * @author Sebastian Yan
@@ -9,16 +10,35 @@ import java.rmi.RemoteException;
  */
 public interface RemoteInterface extends Remote{
 	
-
-	/** interface to open Canvas
+	/** interface to create the white board
 	 * @throws RemoteException
 	 */
-	public void openCanvas() throws RemoteException;
+	public boolean createWhiteBoard() throws RemoteException;
 	
-	/** interface to dispose Canvas (for manager only)
+	/** interface to open the white board
+	 * @throws RemoteException
+	 */
+	public void openWhiteBoard() throws RemoteException;
+	
+	/** interface to dispose the white board (for manager only)
 	 * @throws RemoteException
 	 */
 	public void disposeCanvas() throws RemoteException;
+	
+	/** interface to record username(s) 
+	 * @throws RemoteException
+	 */
+	public void RecordUserInfo(String username) throws RemoteException;
+	
+	/** interface to remove username(s) 
+	 * @throws RemoteException
+	 */
+	public void RemoveClient(String username) throws RemoteException;
+	
+	/** interface to return username(s) 
+	 * @throws RemoteException
+	 */
+	public ArrayList<String> getUserInfo() throws RemoteException;
 
 
 	

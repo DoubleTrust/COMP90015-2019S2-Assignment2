@@ -105,20 +105,38 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	String path2=null;
 	int secondSaved=0;
 	
-	public  DrawingBoard() {
+	public DrawingBoard() {
+		
 		setResizable(false);
 		setBounds( 500, 100, 1029, 757);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        // Create a confirmDialog for the user
+		    	int choice = JOptionPane.showConfirmDialog(new DrawingBoard(), "Are you sure you want to close the window?\n You can open it again through 'Open WhiteBoard' button", "Warning", JOptionPane.YES_NO_OPTION);
+		         
+		    	// If user wants to close the window
+		    	if(choice == JOptionPane.YES_OPTION){
+		        	// Dispose the frame
+		    		setVisible(false);
+	        	}
+		    	else {
+		    		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		    	}
+		    }
+		});	
+		
 		setTitle("DrawingBoard");
 		init();
 		publicInit();
 		addListener();
 	}
 	
-	public  DrawingBoard(BufferedImage image2,int hasSaved,int type2,String path) {
+	public DrawingBoard(BufferedImage image2,int hasSaved,int type2,String path) {
 		setResizable(false);
 		setBounds( 500, 100, 574, 460);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle("WhiteBoard");
 		this.hasSaved=hasSaved;
 		this.type=type2;
