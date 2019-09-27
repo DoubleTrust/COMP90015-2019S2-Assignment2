@@ -76,6 +76,7 @@ public class DrawingBoard extends JFrame {
 		private JMenuItem itemRectangle;
 		private JButton btnClear;
 		private JButton btnFill;
+		private JButton btnText;
 		
 		private JButton btnPixelSize;
 		private JPopupMenu pixelsizeMenu;
@@ -87,8 +88,9 @@ public class DrawingBoard extends JFrame {
 		Color foregroundColor = Color.BLACK;
 		Color backgroundColor = Color.WHITE;
 		private String keyword = "pencil"; 
-		private int pixel_size = 1; 
+		private int pixel_size = 3; 
 		private boolean fill = false;
+		private String inputString;
 		
 		int hasSaved = 0;
 	    String path=null;
@@ -96,10 +98,14 @@ public class DrawingBoard extends JFrame {
 		int type2 =0 ;
 		String path2=null;
 		int secondSaved=0;
+
+		// Board config
+		int boardWidth = 1029;
+		int boardHeight = 757;
 		
 		public  DrawingBoard() {
 			setResizable(false);
-			setBounds( 500, 100, 1029, 757);
+			setBounds( 500, 100, boardWidth, boardHeight);
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 			setTitle("DrawingBoard");
 			init();
@@ -109,7 +115,7 @@ public class DrawingBoard extends JFrame {
 		
 		public  DrawingBoard(BufferedImage image2,int hasSaved,int type2,String path) {
 			setResizable(false);
-			setBounds( 500, 100, 574, 460);
+			setBounds( 500, 100, boardWidth, boardHeight);
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 			setTitle("WhiteBoard");
 			this.hasSaved=hasSaved;
@@ -120,7 +126,28 @@ public class DrawingBoard extends JFrame {
 			addListener();
 		}
 		
+		// Canvas-Mouse clicked action listener
 		private  void addListener() {
+			canvas.addMouseListener(new MouseAdapter(){
+				public void mouseClicked(MouseEvent e)
+				{
+					int xc = e.getX();
+					int yc = e.getY();
+					if(keyword=="text")
+					{
+						inputString = JOptionPane.showInputDialog(null,null,"Input text",JOptionPane.PLAIN_MESSAGE);
+						if(inputString!=null)
+						{
+							System.out.println(xc+" "+yc);
+							g.setFont(new Font("TimesRoman", Font.PLAIN, 5*pixel_size));
+							g.setColor(foregroundColor);
+							g.drawString(inputString, xc, yc);
+						}
+					}
+					canvas.repaint();
+				}
+			});
+
 			// Canvas-Mouse pressed action listener
 			// Record the coordinates when the mouse is pressed. 
 			canvas.addMouseListener(new MouseAdapter(){
@@ -142,7 +169,7 @@ public class DrawingBoard extends JFrame {
 					if(keyword=="line")
 					{
 						g.setColor(foregroundColor);
-						System.out.println("bc:"+backgroundColor+" fc:"+foregroundColor+" px:"+pixel_size);
+						System.out.println("bc:"+backgroundColor+" fc:"+foregroundColor+" :"+pixel_size);
 						g.drawLine(x1, y1, x2, y2);
 						canvas.repaint();
 					}
@@ -247,15 +274,7 @@ public class DrawingBoard extends JFrame {
 			
 				// Set the cursor when the mouse is moving on the canvas.
 				public void mouseMoved(final MouseEvent event){
-					if(keyword=="rubber")
-					{
-						setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));					
-					}
-					else if(keyword=="pencil")
-					{
 						setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-					}
-					
 				}
 			});
 			
@@ -319,7 +338,6 @@ public class DrawingBoard extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (DrawingBoard.this.hasSaved == 0) {
 					 try {
-						  
 					        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
 				            Graphics g = awtImage.getGraphics();
 				            canvas.printAll(g);   
@@ -508,12 +526,20 @@ public class DrawingBoard extends JFrame {
 				textPane.setText(keyword);
 			}
 		});
+
+		// "Text" button listener
+		btnText.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				keyword = "text";
+				textPane.setText(keyword);
+			}
+		});
 		
 		/// "Clear" button listener
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				g.setColor(backgroundColor);
-				g.fillRect(0, 0, 570, 390);
+				g.fillRect(0, 0, canvasWidth, canvasHeight);
 				g.setColor(foregroundColor);
 				canvas.repaint();
 			}
@@ -662,12 +688,18 @@ public class DrawingBoard extends JFrame {
 			btnShapes.setToolTipText("Shapes");
 			toolBar.add(btnShapes);
 			toolBar.addSeparator();
+			// Text
+			btnText = new JButton("");
+			btnText.setBackground(Color.WHITE);
+			btnText.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/text_16.png")));
+			toolBar.add(btnText);
+			toolBar.addSeparator();
 			
 			// PopMenu of Pixel size
 			pixelsizeMenu = new JPopupMenu();
 			pixelsizeMenu.setBackground(Color.WHITE);
-			String[] strlistPixelsize = { "  1px", "  3px", "  5px", "  7px", "  9px", "12px"};
-			int[] intarrayPixelsize = { 1, 3, 5, 7, 9, 12 };
+			String[] strlistPixelsize = { "   3", "   5", "   7", "   9", "  12", "  14"};
+			int[] intarrayPixelsize = { 3, 5, 7, 9, 12, 14 };
 			for(int i=0; i < strlistPixelsize.length; i++) 
 			{
 				final Integer inneri = new Integer(i);
@@ -700,19 +732,20 @@ public class DrawingBoard extends JFrame {
 			// Pixel Size
 			btnPixelSize = new JButton();
 			btnPixelSize.setFont(new Font("Bahnschrift", Font.PLAIN, 12));
-			btnPixelSize.setToolTipText("Pixel size");
-			btnPixelSize.setText("  1px");
+			btnPixelSize.setToolTipText("Line size");
+			btnPixelSize.setText("   3");
+//			btnPixelSize.setSize(new Dimension(16,16));
 			btnPixelSize.setBackground(Color.WHITE);
 			toolBar.add(btnPixelSize);
 			// Separater
 			toolBar.addSeparator();
 			// BackgroundColor
-			btnBc = new JButton();
+			btnBc = new JButton("     ");
 			btnBc.setBackground(backgroundColor);
 			btnBc.setToolTipText("Background Color");
 			toolBar.add(btnBc);
 			// Forground Color
-			btnFc = new JButton();
+			btnFc = new JButton("     ");
 			btnFc.setBackground(foregroundColor);
 			btnFc.setToolTipText("Foreground Color");
 			toolBar.add(btnFc);
