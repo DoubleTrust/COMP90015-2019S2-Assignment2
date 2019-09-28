@@ -10,16 +10,17 @@
    2. 输入"start rmiregistry XXXX" (XXXX为registry占用端口号，默认为1099)
 
       （若提示未安装rmiregistry，请google下载并安装JAVA JDK）
-   ![RMI](https://github.com/DoubleTrust/COMP90015-2019S2-Assignment2/blob/master/README_IMG/RMI.png)
+
+   ![RMI](README_IMG/RMI.png)
 
 2. 启动Server：运行工程文件的“RemoteServer.java”，依照提示输入端口号（需与registry端口号一致）
-   ![Server](https://github.com/DoubleTrust/COMP90015-2019S2-Assignment2/blob/master/README_IMG/server.png)
+   ![Server](README_IMG//server.png)
 3. 启动Client：
 
    1. 运行工程文件的“Client_Connection.java”，依照提示输入主机地址，端口号和用户名（主机号：localhost；端口号与以上一致；用户名目前无要求）
-   ![Client_Connection](http://https://github.com/DoubleTrust/COMP90015-2019S2-Assignment2/blob/master/README_IMG/ClientConnection.png)
+   ![Client_Connection](README_IMG/ClientConnection.png)
    2. 进入ClientGUI界面后，选择“New Whiteboard”，开始绘画。
-   ![ClientGUI](https://github.com/DoubleTrust/COMP90015-2019S2-Assignment2/blob/master/README_IMG/clientGUI.png)
+   ![ClientGUI](README_IMG/clientGUI.png)
 
 ## 版本迭代
 
