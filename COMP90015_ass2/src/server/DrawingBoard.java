@@ -45,8 +45,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import whiteboard.DrawingBoard;
-
 import java.awt.*;
 
 public class DrawingBoard extends JFrame {// implements FrameGetShape
