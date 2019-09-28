@@ -45,6 +45,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import whiteboard.DrawingBoard;
+
 import java.awt.*;
 
 public class DrawingBoard extends JFrame {// implements FrameGetShape
@@ -84,6 +86,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	private JMenuItem itemRectangle;
 	private JButton btnClear;
 	private JButton btnFill;
+	private JButton btnText;
 	
 	private JButton btnPixelSize;
 	private JPopupMenu pixelsizeMenu;
@@ -97,6 +100,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	private String keyword = "pencil"; 
 	private int pixel_size = 1; 
 	private boolean fill = false;
+	private String inputString;
 	
 	int hasSaved = 0;
     String path=null;
@@ -105,10 +109,14 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	String path2=null;
 	int secondSaved=0;
 	
+	// Board config
+	int boardWidth = 1029;
+	int boardHeight = 757;
+	
 	public DrawingBoard() {
 		
 		setResizable(false);
-		setBounds( 500, 100, 1029, 757);
+		setBounds( 500, 100, boardWidth, boardHeight);
 		//setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
@@ -135,7 +143,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	
 	public DrawingBoard(BufferedImage image2,int hasSaved,int type2,String path) {
 		setResizable(false);
-		setBounds( 500, 100, 574, 460);
+		setBounds( 500, 100, boardWidth, boardHeight);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle("WhiteBoard");
 		this.hasSaved=hasSaved;
@@ -147,6 +155,27 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	}
 	
 	private  void addListener() {
+		// Canvas-Mouse clicked action listener
+		canvas.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e)
+			{
+				int xc = e.getX();
+				int yc = e.getY();
+				if(keyword=="text")
+				{
+					inputString = JOptionPane.showInputDialog(null,null,"Input text",JOptionPane.PLAIN_MESSAGE);
+					if(inputString!=null)
+					{
+						System.out.println(xc+" "+yc);
+						g.setFont(new Font("TimesRoman", Font.PLAIN, 5*pixel_size));
+						g.setColor(foregroundColor);
+						g.drawString(inputString, xc, yc);
+					}
+				}
+				canvas.repaint();
+			}
+		});
+		
 		// Canvas-Mouse pressed action listener
 		// Record the coordinates when the mouse is pressed. 
 		canvas.addMouseListener(new MouseAdapter(){
@@ -273,15 +302,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		
 			// Set the cursor when the mouse is moving on the canvas.
 			public void mouseMoved(final MouseEvent event){
-				if(keyword=="rubber")
-				{
-					setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));					
-				}
-				else if(keyword=="pencil")
-				{
 					setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-				}
-				
 			}
 		});
 		
@@ -535,6 +556,14 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		}
 	});
 	
+	// "Text" button listener
+	btnText.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			keyword = "text";
+			textPane.setText(keyword);
+		}
+	});
+	
 	/// "Clear" button listener
 	btnClear.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -687,13 +716,18 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		btnShapes.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnShapes_16.png")));
 		btnShapes.setToolTipText("Shapes");
 		toolBar.add(btnShapes);
+		// Text
+		btnText = new JButton("");
+		btnText.setBackground(Color.WHITE);
+		btnText.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/text_16.png")));
+		toolBar.add(btnText);
 		toolBar.addSeparator();
 		
 		// PopMenu of Pixel size
 		pixelsizeMenu = new JPopupMenu();
 		pixelsizeMenu.setBackground(Color.WHITE);
-		String[] strlistPixelsize = { "  1px", "  3px", "  5px", "  7px", "  9px", "12px"};
-		int[] intarrayPixelsize = { 1, 3, 5, 7, 9, 12 };
+		String[] strlistPixelsize = { "   3", "   5", "   7", "   9", "  12", "  14"};
+		int[] intarrayPixelsize = { 3, 5, 7, 9, 12, 14 };
 		for(int i=0; i < strlistPixelsize.length; i++) 
 		{
 			final Integer inneri = new Integer(i);
@@ -726,19 +760,19 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		// Pixel Size
 		btnPixelSize = new JButton();
 		btnPixelSize.setFont(new Font("Bahnschrift", Font.PLAIN, 12));
-		btnPixelSize.setToolTipText("Pixel size");
-		btnPixelSize.setText("  1px");
+		btnPixelSize.setToolTipText("Line size");
+		btnPixelSize.setText("   3");
 		btnPixelSize.setBackground(Color.WHITE);
 		toolBar.add(btnPixelSize);
 		// Separater
 		toolBar.addSeparator();
 		// BackgroundColor
-		btnBc = new JButton();
+		btnBc = new JButton("     ");
 		btnBc.setBackground(backgroundColor);
 		btnBc.setToolTipText("Background Color");
 		toolBar.add(btnBc);
 		// Forground Color
-		btnFc = new JButton();
+		btnFc = new JButton("     ");
 		btnFc.setBackground(foregroundColor);
 		btnFc.setToolTipText("Foreground Color");
 		toolBar.add(btnFc);
@@ -764,7 +798,6 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		gs = image2.getGraphics();
 		g = (Graphics2D) gs;
 		g.setColor(backgroundColor);
-//		g.fillRect(0, 0, 570, 390);
 		g.setColor(foregroundColor);
 		canvas.setImage(image2);
 		Container s = getContentPane();
