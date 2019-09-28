@@ -126,8 +126,9 @@ public class DrawingBoard extends JFrame {
 			addListener();
 		}
 		
-		// Canvas-Mouse clicked action listener
+		
 		private  void addListener() {
+			// Canvas-Mouse clicked action listener
 			canvas.addMouseListener(new MouseAdapter(){
 				public void mouseClicked(MouseEvent e)
 				{
@@ -687,7 +688,6 @@ public class DrawingBoard extends JFrame {
 			btnShapes.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnShapes_16.png")));
 			btnShapes.setToolTipText("Shapes");
 			toolBar.add(btnShapes);
-			toolBar.addSeparator();
 			// Text
 			btnText = new JButton("");
 			btnText.setBackground(Color.WHITE);
@@ -734,7 +734,6 @@ public class DrawingBoard extends JFrame {
 			btnPixelSize.setFont(new Font("Bahnschrift", Font.PLAIN, 12));
 			btnPixelSize.setToolTipText("Line size");
 			btnPixelSize.setText("   3");
-//			btnPixelSize.setSize(new Dimension(16,16));
 			btnPixelSize.setBackground(Color.WHITE);
 			toolBar.add(btnPixelSize);
 			// Separater
@@ -771,7 +770,6 @@ public class DrawingBoard extends JFrame {
 			gs = image2.getGraphics();
 			g = (Graphics2D) gs;
 			g.setColor(backgroundColor);
-//			g.fillRect(0, 0, 570, 390);
 			g.setColor(foregroundColor);
 			canvas.setImage(image2);
 			Container s = getContentPane();
