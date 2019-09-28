@@ -314,14 +314,14 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 
 	
 	// "New" button listener
-	btnNew.addActionListener(new ActionListener() {
+	/*btnNew.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			DrawingBoard drawingBoard = new DrawingBoard();
 			drawingBoard.setVisible(true);
 			drawingBoard.setDefaultCloseOperation(2);
 			System.out.println("new");
 		}
-	});
+	});*/
 	
 	// "Open" button listener
 	btnOpen.addActionListener(new ActionListener() {
@@ -362,133 +362,20 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// "Save" button listener
 	btnSave.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			if (DrawingBoard.this.hasSaved == 0) {
-				 try {
-					  
-				        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
-			            Graphics g = awtImage.getGraphics();
-			            canvas.printAll(g);   
-				        JFileChooser fileSaveChooser = new JFileChooser("Save a file");
-						FileNameExtensionFilter filter = new FileNameExtensionFilter("JPEG", "jpeg");						
-						fileSaveChooser.setFileFilter(filter);
-						fileSaveChooser.addChoosableFileFilter(new 
-								FileNameExtensionFilter("PNG","png"));
-						fileSaveChooser.addChoosableFileFilter(new 
-								FileNameExtensionFilter("JPG","jpg"));
-						int returnVal = fileSaveChooser.showSaveDialog(fileSaveChooser);
-						if (returnVal == JFileChooser.APPROVE_OPTION) {
-						    File fileToSave = fileSaveChooser.getSelectedFile();
-							String ends = fileSaveChooser.getFileFilter().getDescription();
-							ends = ends.toLowerCase();
-							if(ends.equals("jpeg")) type=1;
-							if(ends.equals("jpg")) type=2;
-							if(ends.equals("png")) type=3;
-							String fileName = fileToSave.getAbsolutePath().toLowerCase();
-							DrawingBoard.this.hasSaved = 1;
-							/*
-							 * If the user does not put extension at the end of the file name,
-							 * automatically create one.
-							 */
-							if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg" )||
-									fileName.endsWith(".png")) {								 
-								ImageIO.write( awtImage,ends,fileToSave);
-								path = fileToSave.getAbsolutePath();
-							} else {
-								File newFile =new File(fileToSave.getAbsolutePath() + "." + ends);
-								ImageIO.write( awtImage,ends,newFile);
-								path = newFile.getAbsolutePath();
-							}
-						}
-				          
-				    } 
-				    catch(IOException e1){
-						System.out.println("Problems reading.");
-					}
-			}
-	// if this file has been saved once. execute the following code
-	      if(DrawingBoard.this.hasSaved ==1 ) {
-		        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
-	            Graphics g = awtImage.getGraphics();
-	            canvas.printAll(g);
-	    	       if(type == 1)
-					try {
-					
-						ImageIO.write(awtImage,"jpeg",new File(path));
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-	    	        if(type == 2)
-					try {
-						
-						ImageIO.write(awtImage,"jpg",new File(path));
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-	    	       if(type == 3)
-					try {
-						 
-						ImageIO.write(awtImage,"png",new File(path));
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-			}
-	      }		
-			System.out.println("save");
+			// Call 'save' function below
+			save();
 		}
 	});
 	
 	// "Saveas" button listener
 	btnSaveas.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			Point p = new Point(0, 0);
-		    SwingUtilities.convertPointToScreen(p, canvas);    
-
-		    /*
-		     * Try to screenShot the current image on the canvas and save it as jpg or png.
-		     * Catch possible extensions such as AWTException or file exceptions.
-		     */
-		    try {
-		        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
-		        Graphics g = awtImage.getGraphics();
-		        canvas.printAll(g);
-		        
-		        JFileChooser fileSaveChooser = new JFileChooser("Save a file");
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("JPEG", "jpeg");						
-				fileSaveChooser.setFileFilter(filter);
-				fileSaveChooser.addChoosableFileFilter(new 
-						FileNameExtensionFilter("PNG","png"));
-				fileSaveChooser.addChoosableFileFilter(new 
-						FileNameExtensionFilter("JPG","jpg"));
-
-				int returnVal = fileSaveChooser.showSaveDialog(fileSaveChooser);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-				    File fileToSave = fileSaveChooser.getSelectedFile();
-					String ends = fileSaveChooser.getFileFilter().getDescription();
-					ends = ends.toLowerCase();
-					String fileName = fileToSave.getAbsolutePath().toLowerCase();
-					
-					/*
-					 * If the user does not put extension at the end of the file name,
-					 * automatically create one.
-					 */
-					if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg" )||
-							fileName.endsWith(".png")) {								 
-						ImageIO.write( awtImage,ends,fileToSave);
-					} else {
-						File newFile =new File(fileToSave.getAbsolutePath() + "." + ends);
-						ImageIO.write( awtImage,ends,newFile);
-					}
-				}
-		        
-		    } 
-		    catch(IOException e1){
-				System.out.println("Problems reading.");
-			}
-			System.out.println("save as");
+			// Call 'saveAs' function below
+			saveAs();
 		}
 	});
+	
+	
 	
 	// "Pencil" button listener
 	btnDraw.addActionListener(new ActionListener() {
@@ -629,7 +516,141 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	
 	}
 	
+	/*
+	 * Function of saving the canvas
+	 */
+	public void save() {
+		if (DrawingBoard.this.hasSaved == 0) {
+			 try {
+				  
+			        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
+		            Graphics g = awtImage.getGraphics();
+		            canvas.printAll(g);   
+			        JFileChooser fileSaveChooser = new JFileChooser("Save a file");
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("JPEG", "jpeg");						
+					fileSaveChooser.setFileFilter(filter);
+					fileSaveChooser.addChoosableFileFilter(new 
+							FileNameExtensionFilter("PNG","png"));
+					fileSaveChooser.addChoosableFileFilter(new 
+							FileNameExtensionFilter("JPG","jpg"));
+					int returnVal = fileSaveChooser.showSaveDialog(fileSaveChooser);
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+					    File fileToSave = fileSaveChooser.getSelectedFile();
+						String ends = fileSaveChooser.getFileFilter().getDescription();
+						ends = ends.toLowerCase();
+						if(ends.equals("jpeg")) type=1;
+						if(ends.equals("jpg")) type=2;
+						if(ends.equals("png")) type=3;
+						String fileName = fileToSave.getAbsolutePath().toLowerCase();
+						DrawingBoard.this.hasSaved = 1;
+						/*
+						 * If the user does not put extension at the end of the file name,
+						 * automatically create one.
+						 */
+						if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg" )||
+								fileName.endsWith(".png")) {								 
+							ImageIO.write( awtImage,ends,fileToSave);
+							path = fileToSave.getAbsolutePath();
+						} else {
+							File newFile =new File(fileToSave.getAbsolutePath() + "." + ends);
+							ImageIO.write( awtImage,ends,newFile);
+							path = newFile.getAbsolutePath();
+						}
+					}
+			          
+			    } 
+			    catch(IOException e1){
+					System.out.println("Problems reading.");
+				}
+		}
+		// if this file has been saved once. execute the following code
+	     if(DrawingBoard.this.hasSaved ==1 ) {
+		        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
+	           Graphics g = awtImage.getGraphics();
+	           canvas.printAll(g);
+	   	       if(type == 1)
+					try {
+					
+						ImageIO.write(awtImage,"jpeg",new File(path));
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	   	        if(type == 2)
+					try {
+						
+						ImageIO.write(awtImage,"jpg",new File(path));
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	   	       if(type == 3)
+					try {
+						 
+						ImageIO.write(awtImage,"png",new File(path));
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+			}
+	     }		
+		System.out.println("save");
+		
+	}
+	
+	/*
+	 * Function of saving canvas as user-defined type
+	 */
+	public void saveAs() {
+		Point p = new Point(0, 0);
+	    SwingUtilities.convertPointToScreen(p, canvas);    
 
+	    /*
+	     * Try to screenShot the current image on the canvas and save it as jpg or png.
+	     * Catch possible extensions such as AWTException or file exceptions.
+	     */
+	    try {
+	        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
+	        Graphics g = awtImage.getGraphics();
+	        canvas.printAll(g);
+	        
+	        JFileChooser fileSaveChooser = new JFileChooser("Save a file");
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("JPEG", "jpeg");						
+			fileSaveChooser.setFileFilter(filter);
+			fileSaveChooser.addChoosableFileFilter(new 
+					FileNameExtensionFilter("PNG","png"));
+			fileSaveChooser.addChoosableFileFilter(new 
+					FileNameExtensionFilter("JPG","jpg"));
+
+			int returnVal = fileSaveChooser.showSaveDialog(fileSaveChooser);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+			    File fileToSave = fileSaveChooser.getSelectedFile();
+				String ends = fileSaveChooser.getFileFilter().getDescription();
+				ends = ends.toLowerCase();
+				String fileName = fileToSave.getAbsolutePath().toLowerCase();
+				
+				/*
+				 * If the user does not put extension at the end of the file name,
+				 * automatically create one.
+				 */
+				if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg" )||
+						fileName.endsWith(".png")) {								 
+					ImageIO.write( awtImage,ends,fileToSave);
+				} else {
+					File newFile =new File(fileToSave.getAbsolutePath() + "." + ends);
+					ImageIO.write( awtImage,ends,newFile);
+				}
+			}
+	        
+	    } 
+	    catch(IOException e1){
+			System.out.println("Problems reading.");
+		}
+		System.out.println("save as");
+	}
+
+	/*
+	 * ???
+	 */
 	public void publicInit()
 	{
 		
@@ -782,7 +803,9 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		textPane.setText("pencil");
 	}
 	
-	// Initalize canvas
+	/*
+	 * Initialize canvas
+	 */
 	public void init() {
 		g.setColor(backgroundColor);// set the color for drawing
 		g.fillRect(0, 0, canvasWidth, canvasHeight);//set background

@@ -56,9 +56,29 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	 */
 	@Override
 	public boolean createWhiteBoard() throws RemoteException{
-		
-		// Determine whether the canvas has been created before
-		if(this.drawingBoard == null) {
+		try {
+			// Determine whether the canvas has been created before
+			if(this.drawingBoard != null) {
+				// Prompt the user to save the canvas
+		    	int choice = JOptionPane.showConfirmDialog(new DrawingBoard(), "Do you want to save before exiting?", "NOTIFICATION", JOptionPane.YES_NO_OPTION);
+		         
+
+		    	if(choice == JOptionPane.YES_OPTION){
+		    		// Save the canvas
+		    		this.drawingBoard.saveAs();
+		    		
+		        	// Dispose the frame
+		    		this.drawingBoard.dispose();
+	        	}
+		    	else if (choice == JOptionPane.CANCEL_OPTION){
+		    		this.drawingBoard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		    	}
+		    	else {	    		
+					// Dispose the previous canvas directly
+					this.drawingBoard.dispose();
+		    	}
+			}
+			
 			// Create a new canvas
 			this.drawingBoard= new DrawingBoard();
 				
@@ -66,12 +86,25 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 			this.drawingBoard.setVisible(true);
 			
 			return true;
-		}
-		else {
+			
+		}catch(Exception e) {
+			e.printStackTrace();
 			return false;
-		}			
+		}
 	}
-
+	
+	/** 
+	 * Implementation of shutting down the system
+	 */
+	@Override
+	public void shutDownWhiteBoard() throws RemoteException{
+		this.drawingBoard.dispose();
+		this.drawingBoard = null;
+		
+		// Inform other clients
+		//...
+	}
+	
 	/** 
 	 * Implementation of opening the white board
 	 */

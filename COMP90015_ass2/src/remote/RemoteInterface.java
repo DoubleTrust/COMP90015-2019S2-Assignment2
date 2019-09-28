@@ -15,6 +15,11 @@ public interface RemoteInterface extends Remote{
 	 */
 	public boolean createWhiteBoard() throws RemoteException;
 	
+	/** interface to shut down the white board
+	 * @throws RemoteException
+	 */
+	public void shutDownWhiteBoard() throws RemoteException;
+	
 	/** interface to open the white board
 	 * @throws RemoteException
 	 */

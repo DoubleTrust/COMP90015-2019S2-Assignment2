@@ -28,7 +28,7 @@ public class ClientGUI {
 	public static JTextArea statusArea;
 	private JPanel panel;
 	private JScrollPane scrollPaneForStatus;
-	private JButton createWhiteBoardButton;
+	private JButton newWhiteBoardButton;
 	private JButton openWhiteBoardButton;
 
 	/**
@@ -106,14 +106,14 @@ public class ClientGUI {
 		panel.setLayout(null);
 
 		// Initialize the title of the frame
-		titleOfFrame = new JLabel("Client GUI DEMO");
+		titleOfFrame = new JLabel("MANAGER GUI DEMO");
 		titleOfFrame.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
 		titleOfFrame.setBounds(15, 15, 219, 34);
 		panel.add(titleOfFrame);
 
 		// Initialize the scroll bar for status area
 		scrollPaneForStatus = new JScrollPane();
-		scrollPaneForStatus.setBounds(26, 166, 329, 351);
+		scrollPaneForStatus.setBounds(26, 240, 328, 277);
 		panel.add(scrollPaneForStatus);
 
 		// Initialize the area to display connection status
@@ -124,7 +124,7 @@ public class ClientGUI {
 		
 		JLabel userList = new JLabel("User List");
 		userList.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
-		userList.setBounds(26, 131, 219, 34);
+		userList.setBounds(26, 191, 219, 34);
 		panel.add(userList);
 
 		// 'Create WhiteBoard' button
@@ -135,13 +135,19 @@ public class ClientGUI {
 	
 		
 		// 'Open WhiteBoard' button
-		createWhiteBoardButton = new JButton("Create WhiteBoard");
-		createWhiteBoardButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
-		createWhiteBoardButton.setBounds(25, 56, 209, 29);
-		panel.add(createWhiteBoardButton);
+		newWhiteBoardButton = new JButton("New WhiteBoard");
+		newWhiteBoardButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
+		newWhiteBoardButton.setBounds(25, 56, 209, 29);
+		panel.add(newWhiteBoardButton);
+		
+		// 'Shut Down' button
+		JButton shutDownButton = new JButton("Shut Down");
+		shutDownButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
+		shutDownButton.setBounds(26, 147, 208, 29);
+		panel.add(shutDownButton);
 
-		// Add listener for 'Create Canvas' button
-		createWhiteBoardButton.addMouseListener(new MouseAdapter() {
+		// Add listener for 'New Canvas' button
+		newWhiteBoardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {			
 				// Open the white board
@@ -173,15 +179,24 @@ public class ClientGUI {
 			}
 		});
 		
-		// Initialize Client and connect using RMI
-		/*client = new Client();
-		while(!client.buildConnection()) {
-			JOptionPane.showConfirmDialog(null, "Unable to connect to RMI. Please check your input.", "Error", JOptionPane.WARNING_MESSAGE);
-			client = new Client();
-		}
-		
-		// Display username(s).... Needs while loop? 
-		client.displayUserInfo();*/
+		// Add listener for 'Shut Down' button
+		shutDownButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				try {
+					// Disconnect the canvas
+					client.remoteInterface.disposeCanvas();	
+					
+					// Remove the client's username
+					client.remoteInterface.RemoveClient(client.username);	
+					
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+	        	// Dispose the frame
+	        	frame.dispose();
+			}
+		});
 
 	}
 
