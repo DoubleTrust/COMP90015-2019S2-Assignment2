@@ -7,6 +7,10 @@ to be added... （需等待小组确认逻辑）
 
 ## 版本迭代
 
+### 2019/09/28
+
+- 
+
 ### 2019/09/24
 
 - 新增Client_Connection GUI, 用于方便用户输入hostname, port和username
