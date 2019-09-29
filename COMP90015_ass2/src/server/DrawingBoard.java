@@ -68,7 +68,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	
 	// Components
 	private JToolBar toolBar;
-	private JButton btnNew;
+//	private JButton btnNew;
 	private JButton btnOpen;
 	private JButton btnSave;
 	private JButton btnSaveas;
@@ -83,12 +83,12 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	private JMenuItem itemSquare;
 	private JMenuItem itemRectangle;
 	private JButton btnClear;
-	private JButton btnFill;
+//	private JButton btnFill;
 	private JButton btnText;
 	
 	private JButton btnPixelSize;
 	private JPopupMenu pixelsizeMenu;
-	private JButton btnBc;
+//	private JButton btnBc;
 	private JButton btnFc;
 	private JTextPane textPane;
 
@@ -96,7 +96,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	Color foregroundColor = Color.BLACK;
 	Color backgroundColor = Color.WHITE;
 	private String keyword = "pencil"; 
-	private int pixel_size = 1; 
+	private int pixel_size = 3; 
 	private boolean fill = false;
 	private String inputString;
 	
@@ -460,7 +460,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	});
 	
 	// "Fill in color" button listener
-	btnFill.addActionListener(new ActionListener() {
+/*	btnFill.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			if(fill)
 			{
@@ -490,7 +490,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 			// set this color as the background of the button
 			btnBc.setBackground(backgroundColor);
 		}
-	});
+	});*/
 	
 	// "Foreground Color" button listener
 	btnFc.addActionListener(new ActionListener() {
@@ -663,11 +663,11 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		toolBar.addSeparator();
 		
 		// New
-		btnNew = new JButton();
-		btnNew.setBackground(Color.WHITE);
-		btnNew.setToolTipText("New file");
-		btnNew.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnNew_16.png")));
-		toolBar.add(btnNew);
+		//btnNew = new JButton();
+		//btnNew.setBackground(Color.WHITE);
+		//btnNew.setToolTipText("New file");
+		//btnNew.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnNew_16.png")));
+		//toolBar.add(btnNew);
 		// Open
 		btnOpen = new JButton();
 		btnOpen.setBackground(Color.WHITE);
@@ -745,7 +745,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		// PopMenu of Pixel size
 		pixelsizeMenu = new JPopupMenu();
 		pixelsizeMenu.setBackground(Color.WHITE);
-		String[] strlistPixelsize = { "   3", "   5", "   7", "   9", "  12", "  14"};
+		String[] strlistPixelsize = { " 3 ", " 5 ", " 7 ", " 9 ", "12", "14"};
 		int[] intarrayPixelsize = { 3, 5, 7, 9, 12, 14 };
 		for(int i=0; i < strlistPixelsize.length; i++) 
 		{
@@ -771,25 +771,29 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		btnClear.setBackground(Color.WHITE);
 		toolBar.add(btnClear);
 		// Fill in Color
-		btnFill = new JButton();
+		/*btnFill = new JButton();
 		btnFill.setBackground(Color.WHITE);
 		btnFill.setToolTipText("Fill in color");
 		btnFill.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/notfill_16.png")));
-		toolBar.add(btnFill);
+		toolBar.add(btnFill);*/
 		// Pixel Size
 		btnPixelSize = new JButton();
 		btnPixelSize.setFont(new Font("Bahnschrift", Font.PLAIN, 12));
 		btnPixelSize.setToolTipText("Line size");
-		btnPixelSize.setText("   3");
+		btnPixelSize.setText(" 3 ");
 		btnPixelSize.setBackground(Color.WHITE);
 		toolBar.add(btnPixelSize);
 		// Separater
 		toolBar.addSeparator();
 		// BackgroundColor
-		btnBc = new JButton("     ");
+		/*btnBc = new JButton("     ");
+		btnBc.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnBc.setBackground(backgroundColor);
 		btnBc.setToolTipText("Background Color");
-		toolBar.add(btnBc);
+		toolBar.add(btnBc);*/
 		// Forground Color
 		btnFc = new JButton("     ");
 		btnFc.setBackground(foregroundColor);
