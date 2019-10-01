@@ -21,6 +21,7 @@ public class Client_Connection {
 	private JLabel hostNameLabel;
 	private JLabel portLabel;
 	private JButton connectButton;
+	private ManagerGUI managerGUI;
 	private ClientGUI clientGUI;
 	private JTextField userName;
 
@@ -117,15 +118,50 @@ public class Client_Connection {
 					// Verify the input
 					// code to be added...
 					
-					// Open the client GUI				
+					// Default: create a manager GUI		
 					clientGUI = new ClientGUI();
 					
 					if(clientGUI.initiateClient(host, port, username)) {
-						JOptionPane.showMessageDialog(null, "Connection succeed.", "Information", JOptionPane.INFORMATION_MESSAGE);			
-						clientGUI.frame.setVisible(true);
-				
-						// Dispose this frame
-						frame.dispose();
+						
+						int userAmount = clientGUI.getUserAmount();
+						
+						JOptionPane.showMessageDialog(null, "Connection succeed.", "Information", JOptionPane.INFORMATION_MESSAGE);
+						
+						// Identify whether the manager exists.
+						if (userAmount == 0) {
+							// Dispose the client
+							clientGUI = null;
+							
+							// Create a manager instead
+							managerGUI = new ManagerGUI();
+							managerGUI.initiateClient(host, port, username);
+							managerGUI.uploadInfo();
+							managerGUI.frame.setVisible(true);
+							
+							// Dispose this frame
+							frame.dispose();
+						}
+						else if(userAmount > 0){	
+							
+							// Initialize the client
+							clientGUI.initialize();
+							
+							// Transmit the username to RMI
+							clientGUI.uploadInfo();
+							
+							// Create a listener for user list
+							clientGUI.createUserListListener();
+							
+							clientGUI.frame.setVisible(true);
+							
+							// Dispose this frame
+							frame.dispose();
+							
+						}
+						else {
+							System.out.println("Error: -1 returned.");
+						}
+
 					}
 					else {
 						JOptionPane.showMessageDialog(null, "Connection failed. Please check your typing and wait for server to set up.", "Host Not Found", JOptionPane.ERROR_MESSAGE);

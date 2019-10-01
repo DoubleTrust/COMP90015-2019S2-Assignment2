@@ -21,7 +21,7 @@ import java.awt.event.ActionEvent;
  * @author Sebastian Yan
  * @date 21/09/2019
  */
-public class ClientGUI {
+public class ManagerGUI {
 	// Define GUI elements
 	public JFrame frame;
 	private JLabel titleOfFrame;
@@ -29,7 +29,7 @@ public class ClientGUI {
 	private JTextArea statusArea;
 	private JPanel panel;
 	private JScrollPane scrollPaneForStatus;
-	private JButton joinWhiteBoardButton;
+	private JButton newWhiteBoardButton;
 	private JButton openWhiteBoardButton;
 	//private DrawingBoard drawingBoard;
 
@@ -42,7 +42,7 @@ public class ClientGUI {
 			@Override
 			public void run() {
 				try {
-					ClientGUI window = new ClientGUI();
+					ManagerGUI window = new ManagerGUI();
 					window.frame.setVisible(true);
 					
 					
@@ -56,9 +56,8 @@ public class ClientGUI {
 	/**
 	 * Create the application 
 	 */
-	public ClientGUI() {
-		// enhance efficiency
-		//initialize();
+	public ManagerGUI() {
+		initialize();
 		
 	}
 	
@@ -66,7 +65,7 @@ public class ClientGUI {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	public void initialize() {
+	private void initialize() {
 		
 		// Initialize the frame
 		frame = new JFrame();
@@ -87,8 +86,8 @@ public class ClientGUI {
 						// Disconnect the canvas
 						client.remoteInterface.closeWhiteBoard();	
 						
-						// Remove the client's username
-						client.remoteInterface.RemoveClient(client.username);	
+						// Remove the clients' info
+						client.remoteInterface.removeAllInfo();	
 						
 					} catch (RemoteException e) {
 						e.printStackTrace();
@@ -96,7 +95,7 @@ public class ClientGUI {
 		        	// Dispose the frame
 		        	frame.dispose();
 		        	client.dicconnect();
-		        	System.exit(0);	        	
+		        	System.exit(0);
 	        	}
 		    	else {
 		    		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -111,9 +110,9 @@ public class ClientGUI {
 		panel.setLayout(null);
 
 		// Initialize the title of the frame
-		titleOfFrame = new JLabel("Client GUI DEMO");
+		titleOfFrame = new JLabel("MANAGER GUI DEMO");
 		titleOfFrame.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
-		titleOfFrame.setBounds(26, 15, 219, 34);
+		titleOfFrame.setBounds(15, 15, 219, 34);
 		panel.add(titleOfFrame);
 
 		// Initialize the scroll bar for status area
@@ -133,33 +132,36 @@ public class ClientGUI {
 		userList.setBounds(26, 191, 219, 34);
 		panel.add(userList);
 
-		// 'Open WhiteBoard' button
+		// 'Create WhiteBoard' button
 		openWhiteBoardButton = new JButton("Open WhiteBoard");
 		openWhiteBoardButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
 		openWhiteBoardButton.setBounds(26, 100, 208, 29);
 		panel.add(openWhiteBoardButton);
 	
 		
-		// 'Join WhiteBoard' button
-		joinWhiteBoardButton = new JButton("Join WhiteBoard");
-		joinWhiteBoardButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
-		joinWhiteBoardButton.setBounds(25, 56, 209, 29);
-		panel.add(joinWhiteBoardButton);
+		// 'Open WhiteBoard' button
+		newWhiteBoardButton = new JButton("New WhiteBoard");
+		newWhiteBoardButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
+		newWhiteBoardButton.setBounds(25, 56, 209, 29);
+		panel.add(newWhiteBoardButton);
+		
+		// 'Shut Down' button
+		JButton shutDownButton = new JButton("Close Connection");
+		shutDownButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 18));
+		shutDownButton.setBounds(26, 147, 208, 29);
+		panel.add(shutDownButton);
 
-		// Add listener for 'Join WhiteBoard' button
-		joinWhiteBoardButton.addMouseListener(new MouseAdapter() {
+		// Add listener for 'New WhiteBoard' button
+		newWhiteBoardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {			
-
-//				try {
-//					// If the client has already joined 
-//					if(client.remoteInterface.joinWhiteBoard(client.username) == false) {
-//						JOptionPane.showMessageDialog(null, "You have already joined.", "Information", JOptionPane.INFORMATION_MESSAGE);			
-//					}	
-//					
-//				} catch (RemoteException e) {
-//					e.printStackTrace();
-//				}
+				try {
+					// Create new white board
+					client.remoteInterface.createWhiteBoard();
+					
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -168,13 +170,32 @@ public class ClientGUI {
 		openWhiteBoardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {			
-//				// Open the white board
-//				try {
-//					client.remoteInterface.openWhiteBoard(client.username);	
-//					
-//				} catch (RemoteException e) {
-//					e.printStackTrace();
-//				}
+				// Open the white board
+				try {
+					client.remoteInterface.openWhiteBoard(client.username);	
+					
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		// Add listener for 'Shut Down' button
+		shutDownButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				try {
+					// Disconnect the canvas
+					client.remoteInterface.closeWhiteBoard();	
+					
+					// Remove the client's username
+					client.remoteInterface.RemoveClient(client.username);	
+					
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+	        	// Dispose the frame
+	        	frame.dispose();
 			}
 		});
 
@@ -192,27 +213,15 @@ public class ClientGUI {
 		}
 		else {			
 			// Display username(s)
-			//Thread userListUpdate = new Thread(new userListListener());
-			//userListUpdate.start();
+			Thread userListUpdate = new Thread(new userListListener());
+			userListUpdate.start();
 			
 			return true;
 		}
 	}
 	
 	/**
-	 * Check the amount of users
-	 */
-	public int getUserAmount() {
-		try {
-			return client.remoteInterface.getUserInfo().size();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			return -1;
-		}	
-	}
-	
-	/**
-	 * Upload user info
+	 * Upload manager info
 	 */
 	public void uploadInfo() {
 		try {
@@ -223,18 +232,11 @@ public class ClientGUI {
 		}	
 	}
 	
-	/**
-	 * Construct a listener for user list
-	 */
-	public void createUserListListener() {
-		Thread userListUpdate = new Thread(new userListListener());
-		userListUpdate.start();
-	}
 	
 	/*
 	 *  Listener of the user list (keep updating forever) 
 	 */
-	class userListListener implements Runnable{
+	class userListListener implements Runnable{		
 		@Override
 		public void run() {
 			try {
@@ -251,5 +253,8 @@ public class ClientGUI {
 				e.printStackTrace();
 			}
 		}
+				
+
 	}
+	
 }

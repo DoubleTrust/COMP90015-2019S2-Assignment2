@@ -85,7 +85,9 @@ public class RemoteServer {
 			if(isInitiated) {
 				System.out.println("RMI initiated. Waiting for connection...");
 				// Keep server running
-				while(true);
+//				while(true) {
+//					Thread.sleep(1000000);
+//				}
 			}
 			else {
 				System.out.println("RMI initiation failed. Please check your RMI status and socket settings.");

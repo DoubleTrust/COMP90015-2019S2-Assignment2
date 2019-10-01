@@ -68,8 +68,8 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	
 	// Components
 	private JToolBar toolBar;
-//	private JButton btnNew;
-	private JButton btnOpen;
+	//private JButton btnNew;
+	//private JButton btnOpen;
 	private JButton btnSave;
 	private JButton btnSaveas;
 	
@@ -83,7 +83,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	private JMenuItem itemSquare;
 	private JMenuItem itemRectangle;
 	private JButton btnClear;
-//	private JButton btnFill;
+	private boolean isActive;
 	private JButton btnText;
 	
 	private JButton btnPixelSize;
@@ -115,19 +115,29 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		
 		setResizable(false);
 		setBounds( 500, 100, boardWidth, boardHeight);
+		this.isActive = false;
 		//setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 		        // Create a confirmDialog for the user
-		    	int choice = JOptionPane.showConfirmDialog(new DrawingBoard(), "Are you sure you want to close the window?\n You can open it again through 'Open WhiteBoard' button", "Warning", JOptionPane.YES_NO_OPTION);
+		    	int choice = JOptionPane.showConfirmDialog(new DrawingBoard(), "Do you want so save before closing?", "Notice", JOptionPane.YES_NO_OPTION);
 		         
 		    	// If user wants to close the window
 		    	if(choice == JOptionPane.YES_OPTION){
+		    		// Call 'SaveAs' function
+		    		saveAs();
+		    		
 		        	// Dispose the frame
-		    		setVisible(false);
+		    		dispose();
+		    		setActive(false);
 	        	}
-		    	else {
+		    	else if(choice == JOptionPane.NO_OPTION){
+		        	// Dispose the frame directly
+		    		dispose();
+		    		setActive(false);
+		    	}
+		    	else{
 		    		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		    	}
 		    }
@@ -143,6 +153,31 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		setResizable(false);
 		setBounds( 500, 100, boardWidth, boardHeight);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        // Create a confirmDialog for the user
+		    	int choice = JOptionPane.showConfirmDialog(new DrawingBoard(), "Do you want so save before closing?", "Notice", JOptionPane.YES_NO_OPTION);
+		         
+		    	// If user wants to close the window
+		    	if(choice == JOptionPane.YES_OPTION){
+		    		// Call 'SaveAs' function
+		    		saveAs();
+		    		
+		        	// Dispose the frame
+		    		dispose();
+		    		setActive(false);
+	        	}
+		    	else if(choice == JOptionPane.NO_OPTION){
+		        	// Dispose the frame directly
+		    		dispose();
+		    		setActive(false);
+		    	}
+		    	else{
+		    		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		    	}
+		    }
+		});	
 		setTitle("WhiteBoard");
 		this.hasSaved=hasSaved;
 		this.type=type2;
@@ -152,7 +187,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		addListener();
 	}
 	
-	private  void addListener() {
+	private void addListener() {
 		// Canvas-Mouse clicked action listener
 		canvas.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e)
@@ -324,40 +359,12 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	});*/
 	
 	// "Open" button listener
-	btnOpen.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			try {
-			    JFileChooser fileOpenChooser = new JFileChooser("Open a file");
-        		int returnVal = fileOpenChooser.showOpenDialog(fileOpenChooser);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File fileToOpen = fileOpenChooser.getSelectedFile();
-					String fileName = fileToOpen.getAbsolutePath().toLowerCase();
-					 path2 =fileToOpen.getAbsolutePath();
-					if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg" )||
-							fileName.endsWith(".png")) {
-						if(fileName.endsWith(".jpeg")) type2=1;
-						if(fileName.endsWith(".jpg")) type2=2;
-						if(fileName.endsWith(".png")) type2=3;
-						image2=ImageIO.read(fileToOpen);
-						DrawingBoard pic2=new DrawingBoard(image2,1,type2,path2);
-						pic2.hasSaved =1;
-					    pic2.setVisible(true);
-					    pic2.setDefaultCloseOperation(2);
-					}else {
-						JOptionPane.showMessageDialog(null, "Please choose valid image!");								
-					} 	
-				}		
-			
-			   
-			 }
-		 catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-			System.out.println("open");
-		}
-	});
+//	btnOpen.addActionListener(new ActionListener() {
+//		public void actionPerformed(ActionEvent e) {
+//			// Call 'openWhiteBoard' button
+//			openWhiteBoard();
+//		}
+//	});
 	
 	// "Save" button listener
 	btnSave.addActionListener(new ActionListener() {
@@ -647,6 +654,63 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		}
 		System.out.println("save as");
 	}
+	
+	/*
+	 * Function of opening a white board
+	 */
+	public DrawingBoard openWhiteBoard() {
+		try {
+		    JFileChooser fileOpenChooser = new JFileChooser("Open a file");
+    		int returnVal = fileOpenChooser.showOpenDialog(fileOpenChooser);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File fileToOpen = fileOpenChooser.getSelectedFile();
+				String fileName = fileToOpen.getAbsolutePath().toLowerCase();
+				 path2 =fileToOpen.getAbsolutePath();
+				if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg" )||
+						fileName.endsWith(".png")) {
+					if(fileName.endsWith(".jpeg")) type2=1;
+					if(fileName.endsWith(".jpg")) type2=2;
+					if(fileName.endsWith(".png")) type2=3;
+					image2=ImageIO.read(fileToOpen);
+					return new DrawingBoard(image2,1,type2,path2);	
+					//pic2.hasSaved =1;
+				    //pic2.setVisible(true);
+				    //pic2.setDefaultCloseOperation(2);
+				}else {
+					JOptionPane.showMessageDialog(null, "Please choose valid image!");	
+					return null;
+				} 	
+			}
+			else {
+				return null;
+			}
+		
+		   
+		 }catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+			return null;
+		 } catch (IOException e1) {
+			e1.printStackTrace();
+			return null;
+		 }
+			//System.out.println("open");
+		
+	}
+	
+	/*
+	 *  Set the active status of the white board (whether closed)
+	 */
+	public boolean setActive(boolean status) {
+		this.isActive = status;
+		return this.isActive;
+	}
+	
+	/*
+	 *  Return the active status of the white board (whether closed)
+	 */
+	public boolean getActive() {
+		return this.isActive;
+	}
 
 	/*
 	 * ???
@@ -663,17 +727,17 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		toolBar.addSeparator();
 		
 		// New
-		//btnNew = new JButton();
-		//btnNew.setBackground(Color.WHITE);
-		//btnNew.setToolTipText("New file");
-		//btnNew.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnNew_16.png")));
-		//toolBar.add(btnNew);
+//		btnNew = new JButton();
+//		btnNew.setBackground(Color.WHITE);
+//		btnNew.setToolTipText("New file");
+//		btnNew.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnNew_16.png")));
+//		toolBar.add(btnNew);
 		// Open
-		btnOpen = new JButton();
-		btnOpen.setBackground(Color.WHITE);
-		btnOpen.setToolTipText("Open file");
-		btnOpen.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnOpen_16.png")));
-		toolBar.add(btnOpen);
+//		btnOpen = new JButton();
+//		btnOpen.setBackground(Color.WHITE);
+//		btnOpen.setToolTipText("Open file");
+//		btnOpen.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnOpen_16.png")));
+//		toolBar.add(btnOpen);
 		// Save
 		btnSave = new JButton();
 		btnSave.setBackground(Color.WHITE);

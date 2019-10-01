@@ -10,35 +10,40 @@ import java.util.ArrayList;
  */
 public interface RemoteInterface extends Remote{
 	
-	/** interface to create the white board
+	/** interface to create the white board (for manager only)
 	 * @throws RemoteException
 	 */
-	public boolean createWhiteBoard() throws RemoteException;
+	public void createWhiteBoard() throws RemoteException;
 	
-	/** interface to shut down the white board
+	/** interface to close the white boards (for manager only)
 	 * @throws RemoteException
 	 */
-	public void shutDownWhiteBoard() throws RemoteException;
+	public void closeWhiteBoard() throws RemoteException;
+	
+	/** interface to join the white board (for ordinary client only)
+	 * @throws RemoteException
+	 */
+	public boolean joinWhiteBoard(String userName) throws RemoteException;
 	
 	/** interface to open the white board
 	 * @throws RemoteException
 	 */
-	public void openWhiteBoard() throws RemoteException;
-	
-	/** interface to dispose the white board (for manager only)
-	 * @throws RemoteException
-	 */
-	public void disposeCanvas() throws RemoteException;
+	public void openWhiteBoard(String username) throws RemoteException;
 	
 	/** interface to record username(s) 
 	 * @throws RemoteException
 	 */
-	public void RecordUserInfo(String username) throws RemoteException;
+	public void uploadUserInfo(String username) throws RemoteException;
 	
 	/** interface to remove username(s) 
 	 * @throws RemoteException
 	 */
 	public void RemoveClient(String username) throws RemoteException;
+	
+	/** interface to remove all clients' info
+	 * @throws RemoteException
+	 */
+	public void removeAllInfo() throws RemoteException;
 	
 	/** interface to return username(s) 
 	 * @throws RemoteException

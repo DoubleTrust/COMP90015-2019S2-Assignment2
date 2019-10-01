@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import client.ManagerGUI.userListListener;
 import remote.RemoteInterface;
 
 /**
@@ -46,7 +47,7 @@ public class Client {
 			this.remoteInterface = (RemoteInterface) registry.lookup("RemoteOperation");
 			
 			// Transmit the username to RMI
-			this.remoteInterface.RecordUserInfo(this.username);
+			//this.remoteInterface.uploadUserInfo(this.username);
 			
 			return true;
 						
@@ -56,10 +57,11 @@ public class Client {
 		}
 	}
 	
+	
 	/**
      * Display username(s)
      */
-	public void displayUserInfo() {
+	public String displayUserInfo() {
 		// (Similar to auto-update dictionary info)
 		try {
 			// Get user lists
@@ -72,10 +74,28 @@ public class Client {
 				userString.append("\n");
 			}
 			
-			ClientGUI.statusArea.setText(userString.toString());
+			// Display 
+			return userString.toString();
+			//ClientGUI.statusArea.setText(userString.toString());
+			//ManagerGUI.statusArea.setText(userString.toString());
+
 			
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			System.out.println("RemoteException");
+			e.printStackTrace();		
+			return "ERROR";
+		} catch (NullPointerException e1) {
+			System.out.println("NULLPointerException");
+			e1.printStackTrace();
+			return "";
+			
 		}
+	}
+	
+	/*
+	 * Disconnect from server
+	 */
+	public void dicconnect() {
+		this.remoteInterface = null;
 	}
 }

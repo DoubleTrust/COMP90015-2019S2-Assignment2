@@ -23,15 +23,18 @@
    ![ClientGUI](README_IMG/clientGUI.png)
 
 ## 版本迭代
-### v0.4.1 (2019/09/29 11.54pm)
+### v0.5.0  (2019/10/01 10:20pm)
+
+- 新增管理员GUI界面（managerGUI），并修改管理员与普通用户的按钮，便于区分（普通用户按钮功能暂未实现）
+- 优化管理员“New Whiteboard”与"Open Whiteboard"按钮之间的逻辑关系
+- 新增用户列表监听器，实时更新新加入用户
+- 优化部分代码结构，修复程序运行时占用100%内存的问题
+
+### v0.4.1 (2019/09/29 11:54pm)
+
 - 去掉new, fill, bc 三个按钮
 - 修改px按钮大小
 - 修改默认的px值：1改为3
-
-~~### 2019/09/29~~
-~~- 新增管理员GUI界面（managerGUI），并修改两个UI的部分按钮，用于区分管理员与普通用户~~
-~~- 新增用户列表监听器，实时更新新加入用户~~
-~~- 尝试解决画板共享问题，无果~~
 
 ### v0.4.0 (2019/09/28)
 
@@ -42,7 +45,7 @@
 ### v0.3.0 (2019/09/24)
 
 - 新增Client_Connection GUI, 用于方便用户输入hostname, port和username
-- ClientGUI新增显示用户名（无实时更新），新增“Create WhiteBoard”和“Open WhiteBoard”按钮  <u>(需小组商讨设计框架)</u>
+- ClientGUI新增显示用户名（无实时更新），新增“Create WhiteBoard”和“Open WhiteBoard”按钮  ~~(需小组商讨设计框架)~~
 - 更改对应的RMI函数
 - 新增“退出确认”监听行为，用于后台删除用户数据
 - 修复部分BUG（扩大whiteboard，但不完美）
