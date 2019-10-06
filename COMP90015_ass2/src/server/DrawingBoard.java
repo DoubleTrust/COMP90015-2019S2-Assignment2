@@ -62,6 +62,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	JLayeredPane lp = new JLayeredPane();
 	JLabel backgroundImage = new JLabel();
 	boolean resizable = false;
+  boolean open = false;
 
 
 	// Mouse action coordinates initialization
@@ -189,6 +190,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		this.hasSaved=hasSaved;
 		this.type=type2;
 		this.path=path;
+    this.image2 = image2;
 		init2(image2);
 		publicInit();
 		addListener();
@@ -336,7 +338,16 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 					// }
 					if(keyword=="oval"||keyword=="circle"||keyword=="square"||keyword=="rectangle")
 					{			
-						Image backImage = image.getSubimage(0, 0, canvasWidth, canvasHeight);
+						Image backImage;
+							if(!open)
+							{
+								backImage = image;
+							}
+							else
+							{
+								backImage = image2;
+							}
+            
 						backgroundImage = new JLabel();
 						ImageIcon canvasContent = new ImageIcon(backImage);
 						backgroundImage.setIcon(canvasContent);
@@ -547,7 +558,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 				confirmAction();
 			}
 			g.setColor(backgroundColor);
-			g.fillRect(0, 0, 1024, 768);
+			g.fillRect(0, 0, canvasWidth, canvasHeight);
 			g.setColor(foregroundColor);
 			canvas.repaint();
 		}
@@ -1037,6 +1048,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		canvas.setBounds(0, 0, canvasWidth, canvasHeight);
 		lp.add(canvas, new Integer(100));
 		s.add(lp,BorderLayout.CENTER);
+    open = true;
 	}
 	
 //	public static void main(String[] args) {
