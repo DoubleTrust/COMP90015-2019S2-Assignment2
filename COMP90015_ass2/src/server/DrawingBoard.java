@@ -50,14 +50,20 @@ import java.awt.*;
 public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// Canvas configuration
 	int canvasWidth = 1024;
-	int canvasHeight = 768;
+	int canvasHeight = 1024;
 	BufferedImage image = new BufferedImage( canvasWidth, canvasHeight, BufferedImage.TYPE_INT_BGR);// Size and type of the image
 	Graphics gs = image.getGraphics();
 	Graphics2D g = (Graphics2D) gs;
 	DrawPictureCanvas canvas = new DrawPictureCanvas();
 	BufferedImage image2 = new BufferedImage( canvasWidth, canvasHeight, BufferedImage.TYPE_INT_BGR);
 	
-	
+	// Layered Pane initialization
+	ResizableShapes resizableShape;
+	JLayeredPane lp = new JLayeredPane();
+	JLabel backgroundImage = new JLabel();
+	boolean resizable = false;
+
+
 	// Mouse action coordinates initialization
 	int x1;
 	int y1;
@@ -91,6 +97,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 //	private JButton btnBc;
 	private JButton btnFc;
 	private JTextPane textPane;
+	private static JButton btnConfirm;
 
 	// Initial parameters
 	Color foregroundColor = Color.BLACK;
@@ -230,7 +237,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 				if(keyword=="line")
 				{
 					g.setColor(foregroundColor);
-					System.out.println("bc:"+backgroundColor+" fc:"+foregroundColor+" px:"+pixel_size);
+//					System.out.println("bc:"+backgroundColor+" fc:"+foregroundColor+" px:"+pixel_size);
 					g.drawLine(x1, y1, x2, y2);
 					canvas.repaint();
 				}
@@ -238,72 +245,112 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 				{
 					int xx1 = x1;
 					int yy1 = y1;
-					int width = x2 - x1;
-					int height = y2 - y1;
+					// int width = x2 - x1;
+					// int height = y2 - y1;
+					int xx2 = x2;
+					int yy2 = y2;
 					g.setColor(foregroundColor);
 					if(x2-x1>0&&y2-y1>0)
 					{
 						xx1 = x1;
 						yy1 = y1;
-						width = x2 - x1;
-						height = y2 - y1;
+						// width = x2 - x1;
+						// height = y2 - y1;
+						xx2 = x2;
+						yy2 = y2;
 					}
 					else if(x2-x1>0&&y2-y1<0)
 					{
 						xx1 = x1;
 						yy1 = y2;
-						width = x2 - x1;
-						height = y1 - y2;
+						// width = x2 - x1;
+						// height = y1 - y2;
+						xx2 = x2;
+						yy2 = y1;
 					}
 					else if(x2-x1<0&&y2-y1<0)
 					{
 						xx1 = x2;
 						yy1 = y2;
-						width = x1 - x2;
-						height = y1 - y2;
+						// width = x1 - x2;
+						// height = y1 - y2;
+						xx2 = x1;
+						yy2 = y1;
 					}
 					else if(x2-x1<0&&y2-y1>0)
 					{
 						xx1 = x2;
 						yy1 = y1;
-						width = x1 - x2;
-						height = y2 - y1;
+						// width = x1 - x2;
+						// height = y2 - y1;
+						xx2 = x1;
+						yy2 = y2;
 					}
-					if(keyword=="oval")
-					{
-						g.drawOval(xx1, yy1, width, height);
-						if(fill)
-						{
-							g.setColor(backgroundColor);
-							g.fillOval(xx1, yy1, width, height);
-						}
-					}
-					else if(keyword=="circle")
-					{
-						g.drawOval(xx1, yy1, width, width);
-						if(fill)
-						{
-							g.setColor(backgroundColor);
-							g.fillOval(xx1, yy1, width, width);
-						}
-					}
-					if(keyword=="rectangle")
-					{
-						g.drawRect(xx1, yy1, width, height);
-						if(fill)
-						{
-							g.setColor(backgroundColor);
-							g.fillRect(xx1, yy1, width, height);
-						}
-					}
-					if(keyword=="square")
-					{
-						g.drawRect(xx1, yy1, width, width);
-						if(fill)
-						{
-							g.setColor(backgroundColor);
-							g.fillRect(xx1, yy1, width, width);
-						}
+					// if(keyword=="oval")
+					// {
+					// 	// g.drawOval(xx1, yy1, width, height);
+					// 	// if(fill)
+					// 	// {
+					// 	// 	g.setColor(backgroundColor);
+					// 	// 	g.fillOval(xx1, yy1, width, height);
+					// 	// }
+					// 	// 							Image backImage = image.getSubimage(0, 0, canvasWidth, canvasHeight);
+					// 	backgroundImage = new JLabel();
+					// 	ImageIcon canvasContent = new ImageIcon(backImage);
+					// 	backgroundImage.setIcon(canvasContent);
+					// 	backgroundImage.setBounds(0, 0, canvasWidth, canvasWidth);
+					// 	lp.add(backgroundImage, new Integer(150));
+						
+						
+					// 	resizableShape = new ResizableShapes(keyword,xx1,yy1,x2,y2,foregroundColor,pixel_size);
+					// 	resizableShape.setOpaque(false);
+					// 	resizableShape.setBounds(0, 0, canvasWidth, canvasWidth);
+					// 	lp.add(resizableShape, new Integer(200));
+					// }
+					// else if(keyword=="circle")
+					// {
+					// 	g.drawOval(xx1, yy1, width, width);
+					// 	if(fill)
+					// 	{
+					// 		g.setColor(backgroundColor);
+					// 		g.fillOval(xx1, yy1, width, width);
+					// 	}
+					// }
+					// if(keyword=="rectangle")
+					// {
+					// 	g.drawRect(xx1, yy1, width, height);
+					// 	if(fill)
+					// 	{
+					// 		g.setColor(backgroundColor);
+					// 		g.fillRect(xx1, yy1, width, height);
+					// 	}
+					// }
+					// if(keyword=="square")
+					// {
+					// 	g.drawRect(xx1, yy1, width, width);
+					// 	if(fill)
+					// 	{
+					// 		g.setColor(backgroundColor);
+					// 		g.fillRect(xx1, yy1, width, width);
+					// 	}
+					// }
+					if(keyword=="oval"||keyword=="circle"||keyword=="square"||keyword=="rectangle")
+					{			
+						Image backImage = image.getSubimage(0, 0, canvasWidth, canvasHeight);
+						backgroundImage = new JLabel();
+						ImageIcon canvasContent = new ImageIcon(backImage);
+						backgroundImage.setIcon(canvasContent);
+						backgroundImage.setBounds(0, 0, canvasWidth, canvasWidth);
+						lp.add(backgroundImage, new Integer(150));
+						
+						
+						resizableShape = new ResizableShapes(keyword,xx1,yy1,xx2,yy2,foregroundColor,pixel_size);
+						resizableShape.setOpaque(false);
+						resizableShape.setBounds(0, 0, canvasWidth, canvasWidth);
+						lp.add(resizableShape, new Integer(200));
+						btnConfirm.setVisible(true);
+						
+						resizable = true;
 					}
 					canvas.repaint();
 				}
@@ -319,11 +366,15 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 				if(x > 0 && y > 0){
 					if(keyword=="rubber")
 					{
+						BasicStroke bStroke = new BasicStroke(pixel_size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+						g.setStroke(bStroke);
 						g.setColor(backgroundColor);
 						g.fillRect(x, y, pixel_size, pixel_size);
 					}
 					else if(keyword=="pencil")
 					{
+						BasicStroke bStroke = new BasicStroke(pixel_size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+						g.setStroke(bStroke);
 						g.setColor(foregroundColor);
 						g.drawLine(x, y, e.getX(), e.getY());
 					}
@@ -387,6 +438,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// "Pencil" button listener
 	btnDraw.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			if(resizable)
+			{
+				confirmAction();
+			}
 			keyword = "pencil";
 			textPane.setText(keyword);
 		}
@@ -395,12 +450,16 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// "Rubber" button listener
 	btnErase.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			if(resizable)
+			{
+				confirmAction();
+			}
 			keyword = "rubber";
 			textPane.setText(keyword);
 		}
 	});
 	
-	// "New" button listener
+	// "Shapes" button listener
 	btnShapes.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			shapesMenu.show(btnShapes,0+btnShapes.getWidth(),0);
@@ -411,6 +470,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// "Line" button listener
 	itemLine.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			if(resizable)
+			{
+				confirmAction();
+			}
 			keyword = "line";
 			textPane.setText(keyword);
 		}
@@ -419,6 +482,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// "Oval" button listener
 	itemOval.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			if(resizable)
+			{
+				confirmAction();
+			}
 			keyword = "oval";
 			textPane.setText(keyword);
 		}
@@ -427,6 +494,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// "Circle" button listener
 	itemCircle.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			if(resizable)
+			{
+				confirmAction();
+			}
 			keyword = "circle";
 			textPane.setText(keyword);
 		}
@@ -435,6 +506,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// "Rectangle" button listener
 	itemRectangle.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			if(resizable)
+			{
+				confirmAction();
+			}
 			keyword = "rectangle";
 			textPane.setText(keyword);
 		}
@@ -443,6 +518,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// "Square" button listener
 	itemSquare.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			if(resizable)
+			{
+				confirmAction();
+			}
 			keyword = "square";
 			textPane.setText(keyword);
 		}
@@ -451,6 +530,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// "Text" button listener
 	btnText.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			if(resizable)
+			{
+				confirmAction();
+			}
 			keyword = "text";
 			textPane.setText(keyword);
 		}
@@ -459,6 +542,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	/// "Clear" button listener
 	btnClear.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			if(resizable)
+			{
+				confirmAction();
+			}
 			g.setColor(backgroundColor);
 			g.fillRect(0, 0, 1024, 768);
 			g.setColor(foregroundColor);
@@ -503,6 +590,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	btnFc.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if(resizable)
+			{
+				confirmAction();
+			}
 			new JColorChooser();
 			Color fgColor = JColorChooser.showDialog(DrawingBoard.this,"Color", Color.CYAN);
 			if(fgColor != null){
@@ -517,10 +608,22 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	btnPixelSize.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) 
 		{
+			if(resizable)
+			{
+				confirmAction();
+			}
 			pixelsizeMenu.show(btnPixelSize,0+btnPixelSize.getWidth(),0);
 		}
 	});
 	
+	// "Confirm" button listener
+	btnConfirm.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			confirmAction();
+			resizable = false;
+		}
+	});
+
 	}
 	
 	/*
@@ -840,6 +943,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		btnFill.setToolTipText("Fill in color");
 		btnFill.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/notfill_16.png")));
 		toolBar.add(btnFill);*/
+
 		// Pixel Size
 		btnPixelSize = new JButton();
 		btnPixelSize.setFont(new Font("Bahnschrift", Font.PLAIN, 12));
@@ -849,6 +953,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		toolBar.add(btnPixelSize);
 		// Separater
 		toolBar.addSeparator();
+
 		// BackgroundColor
 		/*btnBc = new JButton("     ");
 		btnBc.addActionListener(new ActionListener() {
@@ -858,17 +963,52 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		btnBc.setBackground(backgroundColor);
 		btnBc.setToolTipText("Background Color");
 		toolBar.add(btnBc);*/
+
 		// Forground Color
 		btnFc = new JButton("     ");
 		btnFc.setBackground(foregroundColor);
 		btnFc.setToolTipText("Foreground Color");
 		toolBar.add(btnFc);
 
+		// Confirm resizeshape
+		btnConfirm = new JButton();
+		btnConfirm.setVisible(false);
+		btnConfirm.setBackground(Color.WHITE);
+		btnConfirm.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/confirm.png")));
+		btnConfirm.setToolTipText("Confirm shape");
+		toolBar.add(btnConfirm);
+
 		// Condition description text panel
 		textPane = new JTextPane();
 		getContentPane().add(textPane, BorderLayout.SOUTH);
 		textPane.setEditable(false);
 		textPane.setText("pencil");
+	}
+
+	public void confirmAction() 
+	{
+			double xTopleft = resizableShape.returnX();
+			double yTopleft = resizableShape.returnY();
+			double width = resizableShape.returnWidth();
+			double height = resizableShape.returnHeight();
+			lp.remove(backgroundImage);
+			lp.remove(resizableShape);
+			if(keyword=="oval"||keyword=="circle")
+			{
+				BasicStroke bStroke = new BasicStroke(pixel_size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+				g.setStroke(bStroke);
+				g.setColor(foregroundColor);
+				g.drawOval((int) xTopleft,(int) yTopleft,(int) width,(int) height);
+			}
+			else if(keyword=="square"||keyword=="rectangle")
+			{
+				BasicStroke bStroke = new BasicStroke(pixel_size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+				g.setStroke(bStroke);
+				g.setColor(foregroundColor);
+				g.drawRect((int) xTopleft,(int) yTopleft,(int) width,(int) height);
+			}
+			canvas.repaint();
+			btnConfirm.setVisible(false);
 	}
 	
 	/*
@@ -880,7 +1020,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		g.setColor(foregroundColor);//set the color for drawing
 		canvas.setImage(image);//set background color of canvas
 		Container s = getContentPane();
-		s.add(canvas);
+		lp = new JLayeredPane();
+		canvas.setBounds(0, 0, canvasWidth, canvasHeight);
+		lp.add(canvas, new Integer(100));
+		s.add(lp,BorderLayout.CENTER);
 	}
 	
 	public void init2(BufferedImage image2) {
@@ -890,10 +1033,13 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		g.setColor(foregroundColor);
 		canvas.setImage(image2);
 		Container s = getContentPane();
-		s.add(canvas);
+		lp = new JLayeredPane();
+		canvas.setBounds(0, 0, canvasWidth, canvasHeight);
+		lp.add(canvas, new Integer(100));
+		s.add(lp,BorderLayout.CENTER);
 	}
 	
-	/*public static void main(String[] args) {
-		new DrawingBoard().setVisible(true);
-	}*/
+//	public static void main(String[] args) {
+//		new DrawingBoard().setVisible(true);
+//	}
 }
