@@ -1,53 +1,31 @@
 package server;
 
-import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
-
-
-import java.awt.BorderLayout;//�߽粼��
-import java.awt.BasicStroke;//��������
-import java.awt.event.ActionListener;//�����¼� 
-import java.awt.event.ActionEvent; //��������
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-//
-//import com.mr.util.FrameGetShape;//��ȡͼ�εĽӿ�
-//import com.mr.util.ShapeWindow;//ѡ��ͼ�εĽ���
-//import com.mr.util.Shapes;//��ʾ����ѡ���ͼ��
-import java.awt.AlphaComposite;//͸��Ч��
-import java.awt.Font;//������
+import java.awt.BorderLayout;
+import java.awt.BasicStroke;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent; 
+import java.awt.Font;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.Cursor;
 import java.awt.Point;
-
 import javax.imageio.ImageIO;
-//��ť��
-//��ť��
-//������ʾ״̬�İ�ť
-//������
-//С�Ի���
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import java.awt.*;
 
 public class DrawingBoard extends JFrame {// implements FrameGetShape
+	
 	// Canvas configuration
 	int canvasWidth = 1024;
 	int canvasHeight = 1024;
@@ -62,7 +40,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	JLayeredPane lp = new JLayeredPane();
 	JLabel backgroundImage = new JLabel();
 	boolean resizable = false;
-  boolean open = false;
+    boolean open = false;
 
 
 	// Mouse action coordinates initialization
@@ -75,11 +53,8 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	
 	// Components
 	private JToolBar toolBar;
-	//private JButton btnNew;
-	//private JButton btnOpen;
 	private JButton btnSave;
-	private JButton btnSaveas;
-	
+	private JButton btnSaveas;	
 	private JButton btnDraw;
 	private JButton btnErase;
 	private JButton btnShapes;
@@ -91,11 +66,9 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	private JMenuItem itemRectangle;
 	private JButton btnClear;
 	private boolean isActive;
-	private JButton btnText;
-	
+	private JButton btnText;	
 	private JButton btnPixelSize;
 	private JPopupMenu pixelsizeMenu;
-//	private JButton btnBc;
 	private JButton btnFc;
 	private JTextPane textPane;
 	private static JButton btnConfirm;
@@ -119,12 +92,15 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	int boardWidth = 1029;
 	int boardHeight = 757;
 	
+	/*
+	 * Create the white board for the manager
+	 */
 	public DrawingBoard() {
 		
 		setResizable(false);
 		setBounds( 500, 100, boardWidth, boardHeight);
 		this.isActive = false;
-		//setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -151,12 +127,28 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		    }
 		});	
 		
-		setTitle("DrawingBoard");
+		setTitle("Manager Whiteboard");
 		init();
 		publicInit();
 		addListener();
 	}
 	
+	/*
+	 *  Create the white board for the client
+	 */
+	public DrawingBoard(BufferedImage importedImage) {
+		setResizable(false);
+		setBounds( 500, 100, 574, 460);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setTitle("Client Whiteboard ");
+		init2(importedImage);
+		publicInit();
+		addListener();
+	}
+	
+	/*
+	 *  Construct the opened white board for the manager
+	 */
 	public DrawingBoard(BufferedImage image2,int hasSaved,int type2,String path) {
 		setResizable(false);
 		setBounds( 500, 100, boardWidth, boardHeight);
@@ -186,11 +178,12 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		    	}
 		    }
 		});	
-		setTitle("WhiteBoard");
+		setTitle("Manager WhiteBoard");
 		this.hasSaved=hasSaved;
 		this.type=type2;
 		this.path=path;
-    this.image2 = image2;
+		
+		this.image2 = image2;
 		init2(image2);
 		publicInit();
 		addListener();
@@ -239,7 +232,6 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 				if(keyword=="line")
 				{
 					g.setColor(foregroundColor);
-//					System.out.println("bc:"+backgroundColor+" fc:"+foregroundColor+" px:"+pixel_size);
 					g.drawLine(x1, y1, x2, y2);
 					canvas.repaint();
 				}
@@ -247,8 +239,6 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 				{
 					int xx1 = x1;
 					int yy1 = y1;
-					// int width = x2 - x1;
-					// int height = y2 - y1;
 					int xx2 = x2;
 					int yy2 = y2;
 					g.setColor(foregroundColor);

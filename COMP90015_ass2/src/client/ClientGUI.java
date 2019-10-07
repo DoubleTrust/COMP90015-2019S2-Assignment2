@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,15 +12,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-//import server.DrawingBoard;
 
 /**
- * @author Sebastian Yan
- * @date 21/09/2019
+ * @author Chaoxian Zhou, Yangyang Long, Jiuzhou Han, Wentao Yan
+ * @date 07/10/2019
  */
 public class ClientGUI {
+	
 	// Define GUI elements
 	public JFrame frame;
 	private JLabel titleOfFrame;
@@ -31,7 +28,6 @@ public class ClientGUI {
 	private JScrollPane scrollPaneForStatus;
 	private JButton joinWhiteBoardButton;
 	private JButton openWhiteBoardButton;
-	//private DrawingBoard drawingBoard;
 
 	/**
 	 * Launch the application.
@@ -54,15 +50,12 @@ public class ClientGUI {
 	}
 
 	/**
-	 * Create the application 
+	 * Create an empty constructor here for 'Client_Connection' to determine who is the manager and who are clients
 	 */
 	public ClientGUI() {
-		// enhance efficiency
-		//initialize();
-		
+
 	}
 	
-
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -71,31 +64,31 @@ public class ClientGUI {
 		// Initialize the frame
 		frame = new JFrame();
 		frame.setBounds(100, 100, 476, 629);
-		//frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		// Add a confirm dialog when exiting
+		// Add a confirm dialog when closing the client program
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		        // Create a confirmDialog for the user
+		        // Create a confirmDialog for the client
 		    	int choice = JOptionPane.showConfirmDialog(frame, "Are you sure you want to disconnect?", "Warning", JOptionPane.YES_NO_OPTION);
 		         
-		    	// If manager wants to close all connections
+		    	// If the client wants to close all connections
 		    	if(choice == JOptionPane.YES_OPTION){
-		        	try {
-						// Disconnect the canvas
-						client.remoteInterface.closeWhiteBoard();	
-						
-						// Remove the client's username
+		        	try {						
+						// Remove the client's username and close the board
 						client.remoteInterface.RemoveClient(client.username);	
 						
 					} catch (RemoteException e) {
 						e.printStackTrace();
+					} catch (NullPointerException e) {
+						e.printStackTrace();
+						JOptionPane.showConfirmDialog(frame, "Connection to the server has been lost.", "Error", JOptionPane.YES_NO_OPTION);
 					}
+		        	
 		        	// Dispose the frame
 		        	frame.dispose();
-		        	client.dicconnect();
+		        	client.disconnect();
 		        	System.exit(0);	        	
 	        	}
 		    	else {
@@ -150,24 +143,26 @@ public class ClientGUI {
 		joinWhiteBoardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {			
-
-//				try {
-//					// If the client has already joined 
-//					if(client.remoteInterface.joinWhiteBoard(client.username) == false) {
-//						JOptionPane.showMessageDialog(null, "You have already joined.", "Information", JOptionPane.INFORMATION_MESSAGE);			
-//					}	
-//					
-//				} catch (RemoteException e) {
-//					e.printStackTrace();
-//				}
+				try {
+					// If the client has already joined 
+					if(client.remoteInterface.joinWhiteBoard(client.username) == false) {
+						JOptionPane.showMessageDialog(null, "You have already joined.", "Information", JOptionPane.INFORMATION_MESSAGE);			
+					}	
+					
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+					JOptionPane.showConfirmDialog(frame, "Connection to the server has been lost.", "Error", JOptionPane.YES_NO_OPTION);
+				}
 			}
 		});
 		
 		
-		// Add listener for 'Open WhiteBoard' button
-		openWhiteBoardButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {			
+		// Add listener for 'Open WhiteBoard' button (no idea whether it is necessary to add this function)
+//		openWhiteBoardButton.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseClicked(MouseEvent arg0) {			
 //				// Open the white board
 //				try {
 //					client.remoteInterface.openWhiteBoard(client.username);	
@@ -175,8 +170,8 @@ public class ClientGUI {
 //				} catch (RemoteException e) {
 //					e.printStackTrace();
 //				}
-			}
-		});
+//			}
+//		});
 
 	}
 
@@ -191,10 +186,6 @@ public class ClientGUI {
 			return false;
 		}
 		else {			
-			// Display username(s)
-			//Thread userListUpdate = new Thread(new userListListener());
-			//userListUpdate.start();
-			
 			return true;
 		}
 	}
@@ -208,7 +199,11 @@ public class ClientGUI {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			return -1;
-		}	
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			JOptionPane.showConfirmDialog(frame, "Connection to the server has been lost.", "Error", JOptionPane.YES_NO_OPTION);
+			return -1;
+		}
 	}
 	
 	/**
@@ -220,6 +215,9 @@ public class ClientGUI {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			JOptionPane.showConfirmDialog(frame, "Connection to the server has been lost.", "Error", JOptionPane.YES_NO_OPTION);
 		}	
 	}
 	
@@ -245,11 +243,12 @@ public class ClientGUI {
 					String userList = client.displayUserInfo();
 					statusArea.setText(userList);
 				}
-			}catch(NullPointerException e) {
+			} catch (NullPointerException e) {
 				e.printStackTrace();
+				JOptionPane.showConfirmDialog(frame, "Connection to the server has been lost.", "Error", JOptionPane.YES_NO_OPTION);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+			} 
 		}
 	}
 }

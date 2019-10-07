@@ -1,4 +1,3 @@
-
 package client;
 
 import java.awt.EventQueue;
@@ -7,12 +6,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.awt.Font;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 
+/**
+ * @author Chaoxian Zhou, Yangyang Long, Jiuzhou Han, Wentao Yan
+ * @date 07/10/2019
+ */
 public class Client_Connection {
 
 	private JFrame frame;

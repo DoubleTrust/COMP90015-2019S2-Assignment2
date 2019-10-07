@@ -6,9 +6,7 @@ import java.rmi.registry.Registry;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.JOptionPane;
-
 import remote.RemoteInterface;
 
 /**
@@ -34,6 +32,9 @@ public class RemoteServer {
 			Scanner input = new Scanner(System.in);
 			System.out.println("Please type port number:");
 			this.port = input.nextLine().toString();
+			
+			// Close the scanner
+			input.close();
 					
 			// Use regular expression to verify the port number
 			Pattern pattern = Pattern.compile("[1-9][0-9]*");
@@ -84,7 +85,7 @@ public class RemoteServer {
 			// Check whether there is no error of building RMI and server socket
 			if(isInitiated) {
 				System.out.println("RMI initiated. Waiting for connection...");
-				// Keep server running
+				// Keep server running (in case, not removed)
 //				while(true) {
 //					Thread.sleep(1000000);
 //				}

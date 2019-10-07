@@ -5,8 +5,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 /**
- * @author Sebastian Yan
- * @date 23/09/2019
+ * @author Chaoxian Zhou, Yangyang Long, Jiuzhou Han, Wentao Yan
+ * @date 07/10/2019
  */
 public interface RemoteInterface extends Remote{
 	
@@ -15,10 +15,10 @@ public interface RemoteInterface extends Remote{
 	 */
 	public void createWhiteBoard() throws RemoteException;
 	
-	/** interface to close the white boards (for manager only)
+	/** interface to close manager's white board 
 	 * @throws RemoteException
 	 */
-	public void closeWhiteBoard() throws RemoteException;
+	public void closeManagerBoard() throws RemoteException;
 	
 	/** interface to join the white board (for ordinary client only)
 	 * @throws RemoteException
@@ -35,7 +35,7 @@ public interface RemoteInterface extends Remote{
 	 */
 	public void uploadUserInfo(String username) throws RemoteException;
 	
-	/** interface to remove username(s) 
+	/** interface to remove username and corresponding white board
 	 * @throws RemoteException
 	 */
 	public void RemoveClient(String username) throws RemoteException;
