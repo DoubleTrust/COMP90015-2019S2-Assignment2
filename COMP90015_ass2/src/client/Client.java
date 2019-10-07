@@ -1,31 +1,25 @@
-
 package client;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
-
-import client.ManagerGUI.userListListener;
 import remote.RemoteInterface;
 
 /**
- * @author Sebastian Yan
- * @date 23/09/2019
+ * @author Chaoxian Zhou, Yangyang Long, Jiuzhou Han, Wentao Yan
+ * @date 07/10/2019
  */
 public class Client {
-	/** 
-	 * Define the host and port number 
-	 */
+
+	//Define the host and port number 
 	private String host;
 	private String port;
 	public String username;
 	public RemoteInterface remoteInterface;
 	
 	/** 
-	 * Constructor
+	 * Constructor to record the login information
 	 */
 	public Client(String hostname, String port, String username) {
 		// Get the host name and port number
@@ -45,9 +39,6 @@ public class Client {
 			
 			// Retrieve the stub/proxy for the remote operation from the registry
 			this.remoteInterface = (RemoteInterface) registry.lookup("RemoteOperation");
-			
-			// Transmit the username to RMI
-			//this.remoteInterface.uploadUserInfo(this.username);
 			
 			return true;
 						
@@ -74,10 +65,8 @@ public class Client {
 				userString.append("\n");
 			}
 			
-			// Display 
+			// Return the user name
 			return userString.toString();
-			//ClientGUI.statusArea.setText(userString.toString());
-			//ManagerGUI.statusArea.setText(userString.toString());
 
 			
 		} catch (RemoteException e) {
@@ -95,7 +84,7 @@ public class Client {
 	/*
 	 * Disconnect from server
 	 */
-	public void dicconnect() {
+	public void disconnect() {
 		this.remoteInterface = null;
 	}
 }

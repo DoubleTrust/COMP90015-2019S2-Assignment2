@@ -1,33 +1,31 @@
 package server;
 
 import java.rmi.RemoteException;
-import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
 import server.DrawingBoard;
 import remote.RemoteInterface;
 
 /**
- * @author Sebastian Yan
- * @date 23/09/2019
+ * @author Chaoxian Zhou, Yangyang Long, Jiuzhou Han, Wentao Yan
+ * @date 07/10/2019
  */
 public class RemoteImplementation extends UnicastRemoteObject implements RemoteInterface{
 	
-	private static final boolean True = false;
+	// Define the an arrayList to store client username, an arrayList to store clients' white boards and a white board for manager only
 	private ArrayList<String> clientInfo;
-	//private HashMap<String, DrawingBoard> whiteBoards;
-	private DrawingBoard drawingBoard;
+	private DrawingBoard managerWhiteBoard;
+	private HashMap<String, DrawingBoard> clientWhiteBoards;
 	
 	/** 
 	 * Default constructor 
 	 */
 	protected RemoteImplementation() throws RemoteException {
 		this.clientInfo = new ArrayList<String>();
+		this.clientWhiteBoards = new HashMap<String, DrawingBoard>();
 	}
 	
 	/** 
@@ -39,11 +37,14 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	}
 	
 	/** 
-	 * Implementation of removing the client's username
+	 * Implementation of removing the client's username and corresponding white board
 	 */
 	@Override
 	public void RemoveClient(String username) throws RemoteException {
 		this.clientInfo.remove(username);
+		
+		// remove the corresponding white board
+		//(to be added...)
 	}
 	
 	/** 
@@ -52,8 +53,8 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	@Override
 	public void removeAllInfo() throws RemoteException {
 		this.clientInfo.clear();
-		this.drawingBoard = null;
-		//this.whiteBoards = null;
+		this.managerWhiteBoard = null;
+		this.clientWhiteBoards = null;
 	}
 	
 	/** 
@@ -65,89 +66,70 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	}
 	
 	/** 
-	 * Implementation of creating the white board (manager only)
+	 * Implementation of creating the manager's white board 
 	 */
 	@Override
 	public void createWhiteBoard() throws RemoteException{
 		try {
 			// Determine whether the canvas has been created before
-			if(this.drawingBoard == null || this.drawingBoard.getActive() == false) {
+			if(this.managerWhiteBoard == null || this.managerWhiteBoard.getActive() == false) {
 				// Create a new white board
-				this.drawingBoard = new DrawingBoard();
+				this.managerWhiteBoard = new DrawingBoard();
+				
+				// Set the active status
+				this.managerWhiteBoard.setActive(true);
+
+				// Set the visibility
+				this.managerWhiteBoard.setVisible(true);				
+			}
+			else{			
+				this.managerWhiteBoard.setVisible(true);
+				
+				// Ask user whether he/she wants to save before creating a new white board (white board already created before)
+		    	int choice = JOptionPane.showConfirmDialog(new DrawingBoard(), "Do you want to save before creating a new one?", "NOTIFICATION", JOptionPane.YES_NO_OPTION);      
+
+		    	if(choice == JOptionPane.YES_OPTION){
+		    		// Save the canvas
+		    		this.managerWhiteBoard.saveAs();
+		    		
+		        	// Dispose the frame
+		    		this.managerWhiteBoard.dispose();
+	        	}
+		    	else if (choice == JOptionPane.CANCEL_OPTION){
+		    		this.managerWhiteBoard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		    	}		    	
+		    	else {	    		
+					// Dispose the previous canvas directly
+		    		this.managerWhiteBoard.dispose();
+		    	}
+				
+				// Create a new white board
+				this.managerWhiteBoard = new DrawingBoard();
 				//DrawingBoard managerNewBoard= new DrawingBoard();
 				
 				// Set the active status
-				this.drawingBoard.setActive(true);
-
-				// Set the visibility
-				drawingBoard.setVisible(true);
-			}
-			else{
-				// If the frame is is created by clicking 'New Whiteboard' first
-				//if(this.drawingBoard.getActive() != false) {
-					// Find the manager's white board  (should be the manager's board only)
-					//DrawingBoard managerBoard = whiteBoards.get("manager");
-					
-					this.drawingBoard.setVisible(true);
-					
-					// Ask user whether he/she wants to save before creating a new white board (white board already created before)
-			    	int choice = JOptionPane.showConfirmDialog(new DrawingBoard(), "Do you want to save before creating a new one?", "NOTIFICATION", JOptionPane.YES_NO_OPTION);      
+				this.managerWhiteBoard.setActive(true);
 	
-			    	if(choice == JOptionPane.YES_OPTION){
-			    		// Save the canvas
-			    		this.drawingBoard.saveAs();
-			    		//managerBoard.saveAs();
-			    		
-			        	// Dispose the frame
-			    		this.drawingBoard.dispose();
-			    		//managerBoard.dispose();
-		        	}
-			    	else if (choice == JOptionPane.CANCEL_OPTION){
-			    		this.drawingBoard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			    		//managerBoard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			    	}
-			    	
-			    	else {	    		
-						// Dispose the previous canvas directly
-			    		this.drawingBoard.dispose();
-			    		//managerBoard.dispose();
-			    	}
-				
-					// Initialize the white board
-					//this.whiteBoards = new HashMap<>();
-					
-					// Create a new white board
-					this.drawingBoard = new DrawingBoard();
-					//DrawingBoard managerNewBoard= new DrawingBoard();
-					
-					// Set the active status
-					this.drawingBoard.setActive(true);
-		
-					// Set the visibility
-					drawingBoard.setVisible(true);
-					//managerNewBoard.setVisible(true);
-					
-					// Save the board to HashMap
-					//whiteBoards.put("manager", managerNewBoard);
+				// Set the visibility
+				this.managerWhiteBoard.setVisible(true);								
 			}
-//				// If the frame is created by clicking 'Open Whiteboard' first but the user did not load any white board
-//				else {
-//					this.drawingBoard.dispose();
-//					
-//					// Create a new white board
-//					this.drawingBoard = new DrawingBoard();
-//					this.drawingBoard.setActive(true);
-//					//DrawingBoard managerNewBoard= new DrawingBoard();
-//		
-//					// Set the visibility
-//					drawingBoard.setVisible(true);
-//					//managerNewBoard.setVisible(true);
-//					
-//					// Save the board to HashMap
-//					//whiteBoards.put("manager", managerNewBoard);
-//				}
-		
-//			}		
+			
+			// A listener to keep updating the manager's white board
+			Thread canvasListener = new Thread() {
+				@Override
+				public void run() {
+					try {
+						while(true) {
+							managerWhiteBoard.canvas.repaint();
+						} 
+					} catch (NullPointerException e) {
+						e.printStackTrace();
+					}
+					
+				}
+			};
+			canvasListener.start();
+	
 		}catch(Exception e) {
 			e.printStackTrace();
 			System.out.println("Exception.");
@@ -160,39 +142,67 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	 */
 	@Override
 	public boolean joinWhiteBoard(String userName) throws RemoteException{
-		return true;
-		/*DrawingBoard userBoard = whiteBoards.getOrDefault(userName,null);
+		
+		DrawingBoard userBoard = clientWhiteBoards.getOrDefault(userName,null);
 		
 		// If the client has already joined
 		if(userBoard != null) {
-			//System.out.println("userBoard not null");
 			userBoard.setVisible(true);
 			return false;
 		}
 		else {
-			//System.out.println("userBoard  null");
-			DrawingBoard managerBoard = whiteBoards.get("manager");
-			userBoard = managerBoard;
-			userBoard.setVisible(true);
+			// Create a new white board for the client
+			DrawingBoard newClientBoard = new DrawingBoard(this.managerWhiteBoard.image);
+			newClientBoard.setVisible(true);
 			
+			// Put the new white board into HashMap
+			clientWhiteBoards.put(userName, newClientBoard);
+			
+			// A listener to keep updating the client's white board
+			Thread canvasListener = new Thread() {
+				@Override
+				public void run() {
+					try {
+						while(true) {
+							newClientBoard.canvas.repaint();
+						} 
+					} catch (NullPointerException e) {
+						e.printStackTrace();
+					}
+				}
+			};
+			// Start the listener
+			canvasListener.start();			
 			return true;
-		}*/
-
-		
+		}	
 	}
 	
+	
+	/*class canvasListener implements Runnable{
+		@Override
+		public void run(Drawin) {
+			try {
+				while(true) {					
+					
+				}
+			}catch(NullPointerException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}*/
+	
 	/** 
-	 * Implementation of closing all white boards (manager only)
+	 * Implementation of closing manager's white board 
 	 */
 	@Override
-	public void closeWhiteBoard() throws RemoteException{
-		if(this.drawingBoard != null) {
-			this.drawingBoard.dispose();
+	public void closeManagerBoard() throws RemoteException{
+		if(this.managerWhiteBoard != null) {
+			this.managerWhiteBoard.dispose();
 		}
-		//DrawingBoard managerBoard = whiteBoards.get("manager");
-		//managerBoard.dispose();
 		
-		// Inform other clients
+		// Inform other clients here?
 		//...
 		
 	}
@@ -203,68 +213,55 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	@Override
 	public void openWhiteBoard(String username) throws RemoteException{
 		// Create an invisible white board if user chooses to open a white board firstly
-		if(this.drawingBoard == null || this.drawingBoard.getActive() == false) {
-			this.drawingBoard = new DrawingBoard();
-			this.drawingBoard.setVisible(false);	
-			this.drawingBoard = this.drawingBoard.openWhiteBoard();
-			if(this.drawingBoard != null) {
-				this.drawingBoard.hasSaved = 1;
-				this.drawingBoard.setVisible(true);
-				this.drawingBoard.setActive(true);
-				this.drawingBoard.setDefaultCloseOperation(2);
+		if(this.managerWhiteBoard == null || this.managerWhiteBoard.getActive() == false) {
+			this.managerWhiteBoard = new DrawingBoard();
+			this.managerWhiteBoard.setVisible(false);	
+			this.managerWhiteBoard = this.managerWhiteBoard.openWhiteBoard();
+			if(this.managerWhiteBoard != null) {
+				this.managerWhiteBoard.hasSaved = 1;
+				this.managerWhiteBoard.setVisible(true);
+				this.managerWhiteBoard.setActive(true);
+				this.managerWhiteBoard.setDefaultCloseOperation(2);
 			}
-
 		}
-		else if(this.drawingBoard.getActive() != false)  {
+		else if(this.managerWhiteBoard.getActive() != false)  {
 			// Ask user whether he/she wants to save before creating a new white board (white board already created before)
 	    	int choice = JOptionPane.showConfirmDialog(new DrawingBoard(), "Do you want to save before opening another one?", "NOTIFICATION", JOptionPane.YES_NO_OPTION);      
 
 	    	if(choice == JOptionPane.YES_OPTION){
 	    		// Save the canvas
-	    		this.drawingBoard.saveAs();
+	    		this.managerWhiteBoard.saveAs();
 	    		//managerBoard.saveAs();
 	    		
 	        	// Dispose the frame
-	    		this.drawingBoard.dispose();
+	    		this.managerWhiteBoard.dispose();
 	    		//managerBoard.dispose();
 	    		
 	    		// Open another one
-	    		this.drawingBoard = this.drawingBoard.openWhiteBoard();
-	    		if(this.drawingBoard != null) {
-					this.drawingBoard.hasSaved = 1;
-					this.drawingBoard.setVisible(true);
-					this.drawingBoard.setActive(true);
-					this.drawingBoard.setDefaultCloseOperation(2);
-				}	
-	    		 
+	    		this.managerWhiteBoard = this.managerWhiteBoard.openWhiteBoard();
+	    		if(this.managerWhiteBoard != null) {
+					this.managerWhiteBoard.hasSaved = 1;
+					this.managerWhiteBoard.setVisible(true);
+					this.managerWhiteBoard.setActive(true);
+					this.managerWhiteBoard.setDefaultCloseOperation(2);
+				}	    		 
         	}
 	    	else if (choice == JOptionPane.CANCEL_OPTION){
-	    		this.drawingBoard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-	    		//managerBoard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	    		this.managerWhiteBoard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	    	}
 	    	else {	    		
 				// Dispose the previous canvas directly
-	    		this.drawingBoard.dispose();
-	    		//managerBoard.dispose();
+	    		this.managerWhiteBoard.dispose();
 	    		
 	    		// Open another one
-	    		this.drawingBoard = this.drawingBoard.openWhiteBoard();
-	    		if(this.drawingBoard != null) {
-					this.drawingBoard.hasSaved = 1;
-					this.drawingBoard.setVisible(true);
-					this.drawingBoard.setActive(true);
-					this.drawingBoard.setDefaultCloseOperation(2);
+	    		this.managerWhiteBoard = this.managerWhiteBoard.openWhiteBoard();
+	    		if(this.managerWhiteBoard != null) {
+					this.managerWhiteBoard.hasSaved = 1;
+					this.managerWhiteBoard.setVisible(true);
+					this.managerWhiteBoard.setActive(true);
+					this.managerWhiteBoard.setDefaultCloseOperation(2);
 	    		}
-
-	    	}
-			
-		}
-	
+	    	}			
+		}	
 	}
-
-	
-
-	
-	
-
 }
