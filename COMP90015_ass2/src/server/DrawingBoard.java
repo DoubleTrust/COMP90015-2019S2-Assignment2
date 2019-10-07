@@ -71,7 +71,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	private JPopupMenu pixelsizeMenu;
 	private JButton btnFc;
 	private JTextPane textPane;
-	private static JButton btnConfirm;
+	private JButton btnConfirm;
 
 	// Initial parameters
 	Color foregroundColor = Color.BLACK;
@@ -138,9 +138,10 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	 */
 	public DrawingBoard(BufferedImage importedImage) {
 		setResizable(false);
-		setBounds( 500, 100, 574, 460);
+		setBounds( 500, 100, boardWidth, boardHeight);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Client Whiteboard ");
+		this.image2 = importedImage;
 		init2(importedImage);
 		publicInit();
 		addListener();
@@ -1038,7 +1039,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		canvas.setBounds(0, 0, canvasWidth, canvasHeight);
 		lp.add(canvas, new Integer(100));
 		s.add(lp,BorderLayout.CENTER);
-    open = true;
+        open = true;
 	}
 	
 //	public static void main(String[] args) {
