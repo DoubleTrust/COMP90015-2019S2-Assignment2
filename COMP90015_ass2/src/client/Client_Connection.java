@@ -10,10 +10,12 @@ import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * @author Chaoxian Zhou, Yangyang Long, Jiuzhou Han, Wentao Yan
- * @date 07/10/2019
+ * @date 19/10/2019
  */
 public class Client_Connection {
 
@@ -26,8 +28,8 @@ public class Client_Connection {
 	private ManagerGUI managerGUI;
 	private ClientGUI clientGUI;
 	private JTextField userName;
-
-	/**
+  private int allowed=0;
+	/**	
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
@@ -108,9 +110,8 @@ public class Client_Connection {
 		panel.add(userName);
 		
 		// Add a listener to connect button
-		connectButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
+		connectButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 				try {
 					// Acquire use's input
 					String host = hostName.getText().trim().toString();
@@ -124,13 +125,13 @@ public class Client_Connection {
 					clientGUI = new ClientGUI();
 					
 					if(clientGUI.initiateClient(host, port, username)) {
-						
+							
 						int userAmount = clientGUI.getUserAmount();
 						
-						JOptionPane.showMessageDialog(null, "Connection succeed.", "Information", JOptionPane.INFORMATION_MESSAGE);
 						
 						// Identify whether the manager exists.
 						if (userAmount == 0) {
+							JOptionPane.showMessageDialog(null, "Connection succeed.", "Information", JOptionPane.INFORMATION_MESSAGE);
 							// Dispose the client
 							clientGUI = null;
 							
@@ -144,7 +145,12 @@ public class Client_Connection {
 							frame.dispose();
 						}
 						else if(userAmount > 0){	
-							
+							JOptionPane.showMessageDialog(null, "Waiting for authorization...", "Information", JOptionPane.INFORMATION_MESSAGE);
+							//send a require to the manager
+							allowed= clientGUI.AllowOrNot();
+							//if manager agrees the require
+							if (allowed==1) {
+							System.out.print("entry");
 							// Initialize the client
 							clientGUI.initialize();
 							
@@ -158,7 +164,12 @@ public class Client_Connection {
 							
 							// Dispose this frame
 							frame.dispose();
-							
+							}
+							//manager refuses the manager
+							if(allowed==0) {
+								JOptionPane.showMessageDialog(null, "Connection failed. You are refused by the manager", "Host Not Found", JOptionPane.ERROR_MESSAGE);
+
+							}
 						}
 						else {
 							System.out.println("Error: -1 returned.");

@@ -1,4 +1,4 @@
-package server;
+package client;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 
 /**
  * @author Yangyang Long
- * @date 05/10/2019
+ * @date 17/10/2019
  */
 public class ResizableShapes extends JPanel {
 	  private int SIZE = 8;

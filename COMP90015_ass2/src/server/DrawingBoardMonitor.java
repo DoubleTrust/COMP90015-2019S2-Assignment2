@@ -12,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.BorderLayout;
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent; 
@@ -23,8 +24,13 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import client.DrawingBoard;
 
-public class DrawingBoard extends JFrame {// implements FrameGetShape
+/**
+ * @author Chaoxian Zhou, Yangyang Long, Jiuzhou Han, Wentao Yan
+ * @date 19/10/2019
+ */
+public class DrawingBoardMonitor extends JFrame {// implements FrameGetShape
 	
 	// Canvas configuration
 	int canvasWidth = 1024;
@@ -33,8 +39,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	Graphics gs = image.getGraphics();
 	Graphics2D g = (Graphics2D) gs;
 	DrawPictureCanvas canvas = new DrawPictureCanvas();
-	BufferedImage image2 = new BufferedImage( canvasWidth, canvasHeight, BufferedImage.TYPE_INT_BGR);
-	
+
 	// Layered Pane initialization
 	ResizableShapes resizableShape;
 	JLayeredPane lp = new JLayeredPane();
@@ -72,6 +77,8 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	private JButton btnFc;
 	private JTextPane textPane;
 	private JButton btnConfirm;
+	public boolean synchronize = true;
+	public boolean openTriger = false;
 
 	// Initial parameters
 	Color foregroundColor = Color.BLACK;
@@ -95,39 +102,13 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	/*
 	 * Create the white board for the manager
 	 */
-	public DrawingBoard() {
+	public DrawingBoardMonitor() {
 		
 		setResizable(false);
 		setBounds( 500, 100, boardWidth, boardHeight);
 		this.isActive = false;
 		
-		this.addWindowListener(new java.awt.event.WindowAdapter() {
-		    @Override
-		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		        // Create a confirmDialog for the user
-		    	int choice = JOptionPane.showConfirmDialog(new DrawingBoard(), "Do you want so save before closing?", "Notice", JOptionPane.YES_NO_OPTION);
-		         
-		    	// If user wants to close the window
-		    	if(choice == JOptionPane.YES_OPTION){
-		    		// Call 'SaveAs' function
-		    		saveAs();
-		    		
-		        	// Dispose the frame
-		    		dispose();
-		    		setActive(false);
-	        	}
-		    	else if(choice == JOptionPane.NO_OPTION){
-		        	// Dispose the frame directly
-		    		dispose();
-		    		setActive(false);
-		    	}
-		    	else{
-		    		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		    	}
-		    }
-		});	
-		
-		setTitle("Manager Whiteboard");
+		setTitle("Server Whiteboard Monitor. ");
 		init();
 		publicInit();
 		addListener();
@@ -136,12 +117,11 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	/*
 	 *  Create the white board for the client
 	 */
-	public DrawingBoard(BufferedImage importedImage) {
+	public DrawingBoardMonitor(BufferedImage importedImage) {
 		setResizable(false);
-		setBounds( 500, 100, boardWidth, boardHeight);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setTitle("Client Whiteboard ");
-		this.image2 = importedImage;
+		setBounds( 500, 100, boardWidth, boardHeight);		
+		setTitle("Server Whiteboard Monitor ");
+		this.image = importedImage;
 		init2(importedImage);
 		publicInit();
 		addListener();
@@ -150,7 +130,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	/*
 	 *  Construct the opened white board for the manager
 	 */
-	public DrawingBoard(BufferedImage image2,int hasSaved,int type2,String path) {
+	public DrawingBoardMonitor(BufferedImage image2,int hasSaved,int type2,String path) {
 		setResizable(false);
 		setBounds( 500, 100, boardWidth, boardHeight);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -158,7 +138,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 		        // Create a confirmDialog for the user
-		    	int choice = JOptionPane.showConfirmDialog(new DrawingBoard(), "Do you want so save before closing?", "Notice", JOptionPane.YES_NO_OPTION);
+		    	int choice = JOptionPane.showConfirmDialog(new DrawingBoardMonitor(), "Do you want so save before closing?", "Notice", JOptionPane.YES_NO_OPTION);
 		         
 		    	// If user wants to close the window
 		    	if(choice == JOptionPane.YES_OPTION){
@@ -184,7 +164,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		this.type=type2;
 		this.path=path;
 		
-		this.image2 = image2;
+		this.image = image2;
 		init2(image2);
 		publicInit();
 		addListener();
@@ -330,15 +310,9 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 					if(keyword=="oval"||keyword=="circle"||keyword=="square"||keyword=="rectangle")
 					{			
 						Image backImage;
-							if(!open)
-							{
-								backImage = image;
-							}
-							else
-							{
-								backImage = image2;
-							}
-            
+				        backImage = image;
+						
+
 						backgroundImage = new JLabel();
 						ImageIcon canvasContent = new ImageIcon(backImage);
 						backgroundImage.setIcon(canvasContent);
@@ -544,49 +518,9 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	/// "Clear" button listener
 	btnClear.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			if(resizable)
-			{
-				confirmAction();
-			}
-			g.setColor(backgroundColor);
-			g.fillRect(0, 0, canvasWidth, canvasHeight);
-			g.setColor(foregroundColor);
-			canvas.repaint();
+			clearContent();
 		}
 	});
-	
-	// "Fill in color" button listener
-/*	btnFill.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			if(fill)
-			{
-				fill=false;
-				btnFill.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/notfill_16.png")));
-				btnFill.setToolTipText("not fill in color");
-			}
-			else
-			{
-				fill=true;
-				btnFill.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/fill_16.png")));
-				btnFill.setToolTipText("fill in color");
-			}
-		}
-	});
-	
-	
-	// "Background Color" button listener
-	btnBc.addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			new JColorChooser();
-			Color bgColor = JColorChooser.showDialog(DrawingBoard.this,"Color", Color.CYAN);
-			if(bgColor != null){
-				backgroundColor = bgColor;// if the color selected is not null
-			}
-			// set this color as the background of the button
-			btnBc.setBackground(backgroundColor);
-		}
-	});*/
 	
 	// "Foreground Color" button listener
 	btnFc.addActionListener(new ActionListener() {
@@ -597,7 +531,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 				confirmAction();
 			}
 			new JColorChooser();
-			Color fgColor = JColorChooser.showDialog(DrawingBoard.this,"Color", Color.CYAN);
+			Color fgColor = JColorChooser.showDialog(DrawingBoardMonitor.this,"Color", Color.CYAN);
 			if(fgColor != null){
 				foregroundColor = fgColor; // if the color selected is not null
 			}
@@ -632,7 +566,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	 * Function of saving the canvas
 	 */
 	public void save() {
-		if (DrawingBoard.this.hasSaved == 0) {
+		if (DrawingBoardMonitor.this.hasSaved == 0) {
 			 try {
 				  
 			        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
@@ -654,7 +588,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 						if(ends.equals("jpg")) type=2;
 						if(ends.equals("png")) type=3;
 						String fileName = fileToSave.getAbsolutePath().toLowerCase();
-						DrawingBoard.this.hasSaved = 1;
+						DrawingBoardMonitor.this.hasSaved = 1;
 						/*
 						 * If the user does not put extension at the end of the file name,
 						 * automatically create one.
@@ -676,7 +610,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 				}
 		}
 		// if this file has been saved once. execute the following code
-	     if(DrawingBoard.this.hasSaved ==1 ) {
+	     if(DrawingBoardMonitor.this.hasSaved ==1 ) {
 		        BufferedImage awtImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);						
 	           Graphics g = awtImage.getGraphics();
 	           canvas.printAll(g);
@@ -709,9 +643,38 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		
 	}
 	
+	public synchronized void setCanvas(BufferedImage importedImage) {		
+		if(openTriger == true) {
+			this.image=importedImage;
+			this.gs=this.image.getGraphics();
+			this.g=(Graphics2D)gs;
+			this.g.setColor(backgroundColor);
+			this.g.setColor(foregroundColor);
+			this.canvas.setImage(this.image);
+			this.canvas.repaint();
+		}	
+		else{
+			// Combine the background and imported buffered image
+			Graphics2D g2d = this.image.createGraphics();
+			int importedImgWidth = importedImage.getWidth();
+			int importedImgHeigth = importedImage.getHeight();
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,(float)1));
+			g2d.drawImage(importedImage, 0, 0, importedImgWidth, importedImgHeigth, null);
+			g2d.dispose();
+			
+			//this.image=importedImage;
+			this.gs=this.image.getGraphics();
+			this.g=(Graphics2D)gs;
+			this.g.setColor(backgroundColor);
+			this.g.setColor(foregroundColor);
+			this.canvas.setImage(this.image);
+			this.canvas.repaint();
+		}
+	}
+  	
 	/*
 	 * Function of saving canvas as user-defined type
-	 */
+	 */	
 	public void saveAs() {
 		Point p = new Point(0, 0);
 	    SwingUtilities.convertPointToScreen(p, canvas);    
@@ -763,7 +726,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	/*
 	 * Function of opening a white board
 	 */
-	public DrawingBoard openWhiteBoard() {
+	public DrawingBoardMonitor openWhiteBoard() {
 		try {
 		    JFileChooser fileOpenChooser = new JFileChooser("Open a file");
     		int returnVal = fileOpenChooser.showOpenDialog(fileOpenChooser);
@@ -776,8 +739,8 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 					if(fileName.endsWith(".jpeg")) type2=1;
 					if(fileName.endsWith(".jpg")) type2=2;
 					if(fileName.endsWith(".png")) type2=3;
-					image2=ImageIO.read(fileToOpen);
-					return new DrawingBoard(image2,1,type2,path2);	
+					image=ImageIO.read(fileToOpen);
+					return new DrawingBoardMonitor(image,1,type2,path2);	
 					//pic2.hasSaved =1;
 				    //pic2.setVisible(true);
 				    //pic2.setDefaultCloseOperation(2);
@@ -847,26 +810,26 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		btnSave = new JButton();
 		btnSave.setBackground(Color.WHITE);
 		btnSave.setToolTipText("Save file");
-		btnSave.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnSave_16.png")));
+		btnSave.setIcon(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/btnSave_16.png")));
 		toolBar.add(btnSave);
 		// Save as
 		btnSaveas = new JButton();
 		btnSaveas.setBackground(Color.WHITE);
 		btnSaveas.setToolTipText("Save file as");
-		btnSaveas.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnSaveas_16.png")));
+		btnSaveas.setIcon(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/btnSaveas_16.png")));
 		toolBar.add(btnSaveas);
 		// Separator
 		toolBar.addSeparator();
 		// Pencil(free drawing)
 		btnDraw = new JButton();
 		btnDraw.setBackground(Color.WHITE);
-		btnDraw.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnDraw_16.png")));
+		btnDraw.setIcon(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/btnDraw_16.png")));
 		btnDraw.setToolTipText("Pencil");
 		toolBar.add(btnDraw);
 		// Rubber
 		btnErase = new JButton();
 		btnErase.setBackground(Color.WHITE);
-		btnErase.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnEraser_16.png")));
+		btnErase.setIcon(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/btnEraser_16.png")));
 		btnErase.setToolTipText("Rubber");
 		toolBar.add(btnErase);
 		
@@ -874,40 +837,40 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		shapesMenu = new JPopupMenu();
 		shapesMenu.setBackground(Color.WHITE);
 		// item line
-		itemLine = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/line_16.png")));
+		itemLine = new JMenuItem(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/line_16.png")));
 		itemLine.setToolTipText("Line");
 		itemLine.setBackground(Color.WHITE);
 		shapesMenu.add(itemLine);
 		// item circle
-		itemCircle = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/circle_16.png")));
+		itemCircle = new JMenuItem(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/circle_16.png")));
 		itemCircle.setToolTipText("Circle");
 		itemCircle.setBackground(Color.WHITE);
 		shapesMenu.add(itemCircle);
 		// item oval
-		itemOval = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/oval_16.png")));
+		itemOval = new JMenuItem(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/oval_16.png")));
 		itemOval.setToolTipText("Oval");
 		itemOval.setBackground(Color.WHITE);
 		shapesMenu.add(itemOval);
 		// item square
-		itemSquare = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/square_16.png")));
+		itemSquare = new JMenuItem(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/square_16.png")));
 		itemSquare.setToolTipText("Square");
 		itemSquare.setBackground(Color.WHITE);
 		shapesMenu.add(itemSquare);
 		// item rectangle
-		itemRectangle = new JMenuItem(new ImageIcon(DrawingBoard.class.getResource("/img/rectangle_16.png")));
+		itemRectangle = new JMenuItem(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/rectangle_16.png")));
 		itemRectangle.setToolTipText("Rectangle");
 		itemRectangle.setBackground(Color.WHITE);
 		shapesMenu.add(itemRectangle);
 		// Shapes
 		btnShapes = new JButton();
 		btnShapes.setBackground(Color.WHITE);
-		btnShapes.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/btnShapes_16.png")));
+		btnShapes.setIcon(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/btnShapes_16.png")));
 		btnShapes.setToolTipText("Shapes");
 		toolBar.add(btnShapes);
 		// Text
 		btnText = new JButton("");
 		btnText.setBackground(Color.WHITE);
-		btnText.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/text_16.png")));
+		btnText.setIcon(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/text_16.png")));
 		toolBar.add(btnText);
 		toolBar.addSeparator();
 		
@@ -936,7 +899,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		// Clear
 		btnClear = new JButton();
 		btnClear.setToolTipText("Clear");
-		btnClear.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/clear_16.png")));
+		btnClear.setIcon(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/clear_16.png")));
 		btnClear.setBackground(Color.WHITE);
 		toolBar.add(btnClear);
 		// Fill in Color
@@ -976,7 +939,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		btnConfirm = new JButton();
 		btnConfirm.setVisible(false);
 		btnConfirm.setBackground(Color.WHITE);
-		btnConfirm.setIcon(new ImageIcon(DrawingBoard.class.getResource("/img/confirm.png")));
+		btnConfirm.setIcon(new ImageIcon(DrawingBoardMonitor.class.getResource("/img/confirm.png")));
 		btnConfirm.setToolTipText("Confirm shape");
 		toolBar.add(btnConfirm);
 
@@ -1029,8 +992,9 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	}
 	
 	public void init2(BufferedImage image2) {
+		//clear();
 		gs = image2.getGraphics();
-		g = (Graphics2D) gs;
+		g = (Graphics2D) gs;		
 		g.setColor(backgroundColor);
 		g.setColor(foregroundColor);
 		canvas.setImage(image2);
@@ -1042,7 +1006,18 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
         open = true;
 	}
 	
-//	public static void main(String[] args) {
-//		new DrawingBoard().setVisible(true);
-//	}
+	public void clearContent() {
+		if(resizable) {
+		    confirmAction();
+		}
+	   image = new BufferedImage( canvasWidth, canvasHeight, BufferedImage.TYPE_INT_BGR);
+	   gs = image.getGraphics();
+	   g = (Graphics2D) gs;
+	   g.setColor(backgroundColor);
+	   g.fillRect(0, 0, canvasWidth, canvasHeight);
+	   g.setColor(foregroundColor);
+	   canvas.setImage(image);
+	   canvas.repaint();
+	}
+	
 }
