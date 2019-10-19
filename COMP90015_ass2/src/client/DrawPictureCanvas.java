@@ -1,4 +1,4 @@
-package server;
+package client;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
@@ -6,7 +6,7 @@ import java.awt.Image;
 
 /**
  * @author Yangyang Long
- * @date 05/10/2019
+ * @date 17/10/2019
  */
 public class DrawPictureCanvas extends Canvas{
 

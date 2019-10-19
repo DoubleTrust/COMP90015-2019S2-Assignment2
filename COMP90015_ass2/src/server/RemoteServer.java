@@ -1,8 +1,11 @@
 package server;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,8 +13,8 @@ import javax.swing.JOptionPane;
 import remote.RemoteInterface;
 
 /**
- * @author Sebastian Yan
- * @date 23/09/2019
+ * @author Wentao Yan
+ * @date 17/10/2019
  */
 public class RemoteServer {
 	
@@ -20,6 +23,7 @@ public class RemoteServer {
 	 * Define port number
 	 */
 	private String port;
+	private String hostname;
 	public RemoteInterface remoteMethods;
 
 	
@@ -30,6 +34,8 @@ public class RemoteServer {
 		try {
 			// Request the port number
 			Scanner input = new Scanner(System.in);
+			System.out.println("Please type the host name for set-up:");
+			this.hostname = input.nextLine().toString();
 			System.out.println("Please type port number:");
 			this.port = input.nextLine().toString();
 			
@@ -55,13 +61,22 @@ public class RemoteServer {
 	 */
 	public boolean initiateRMI() {	
 		try {
+			
+			System.setProperty("java.rmi.server.hostname", this.hostname.trim());	
+			
 			// Create the interface of remote service
 			// Note: RMI is multi-threaded. What needs to be done is to guarantee the object is thread-safe.
 			remoteMethods = new RemoteImplementation();
 			
+			
 			// Create the registry (localhost with specified port number) and publish the remote object's stub in the registry under the name "RemoteOperation"
 			Registry registry = LocateRegistry.getRegistry(Integer.parseInt(this.port));
+			
 			registry.rebind("RemoteOperation", remoteMethods);
+			
+			// ip and host for connection
+			System.out.println("host: " + this.hostname.trim());
+			System.out.println("port: " + Integer.parseInt(this.port));
 			
 
 			// If there is no exception
@@ -70,7 +85,7 @@ public class RemoteServer {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			return false;
-		} 
+		} 		
 	}
 	
 	public static void main(String[] args) {
@@ -85,10 +100,6 @@ public class RemoteServer {
 			// Check whether there is no error of building RMI and server socket
 			if(isInitiated) {
 				System.out.println("RMI initiated. Waiting for connection...");
-				// Keep server running (in case, not removed)
-//				while(true) {
-//					Thread.sleep(1000000);
-//				}
 			}
 			else {
 				System.out.println("RMI initiation failed. Please check your RMI status and socket settings.");
