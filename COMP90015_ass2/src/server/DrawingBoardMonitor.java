@@ -83,6 +83,7 @@ public class DrawingBoardMonitor extends JFrame {// implements FrameGetShape
 	// Initial parameters
 	Color foregroundColor = Color.BLACK;
 	Color backgroundColor = Color.WHITE;
+	Color eraserColor = new Color(254,254,254);
 	private String keyword = "pencil"; 
 	private int pixel_size = 3; 
 	private boolean fill = false;
@@ -110,8 +111,8 @@ public class DrawingBoardMonitor extends JFrame {// implements FrameGetShape
 		
 		setTitle("Server Whiteboard Monitor. ");
 		init();
-		publicInit();
-		addListener();
+//		publicInit();
+//		addListener();
 	}
 	
 	/*
@@ -123,8 +124,8 @@ public class DrawingBoardMonitor extends JFrame {// implements FrameGetShape
 		setTitle("Server Whiteboard Monitor ");
 		this.image = importedImage;
 		init2(importedImage);
-		publicInit();
-		addListener();
+//		publicInit();
+//		addListener();
 	}
 	
 	/*
@@ -166,8 +167,8 @@ public class DrawingBoardMonitor extends JFrame {// implements FrameGetShape
 		
 		this.image = image2;
 		init2(image2);
-		publicInit();
-		addListener();
+//		publicInit();
+//		addListener();
 	}
 	
 	private void addListener() {
@@ -344,7 +345,7 @@ public class DrawingBoardMonitor extends JFrame {// implements FrameGetShape
 					{
 						BasicStroke bStroke = new BasicStroke(pixel_size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 						g.setStroke(bStroke);
-						g.setColor(backgroundColor);
+						g.setColor(eraserColor);
 						g.fillRect(x, y, pixel_size, pixel_size);
 					}
 					else if(keyword=="pencil")
@@ -643,28 +644,31 @@ public class DrawingBoardMonitor extends JFrame {// implements FrameGetShape
 		
 	}
 	
-	public synchronized void setCanvas(BufferedImage importedImage) {		
+	public  void setCanvas(BufferedImage importedImage) {		
 		if(openTriger == true) {
 			this.image=importedImage;
 			this.gs=this.image.getGraphics();
-			this.g=(Graphics2D)gs;
+			this.g=(Graphics2D)this.gs;
 			this.g.setColor(backgroundColor);
 			this.g.setColor(foregroundColor);
 			this.canvas.setImage(this.image);
 			this.canvas.repaint();
 		}	
 		else{
+//			BufferedImage transparencyImg = setTransparency(importedImage);
+			//BufferedImage originalImg = this.image.getSubimage(0, 0, this.image.getWidth(), this.image.getHeight());
 			// Combine the background and imported buffered image
-			Graphics2D g2d = this.image.createGraphics();
-			int importedImgWidth = importedImage.getWidth();
-			int importedImgHeigth = importedImage.getHeight();
-			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,(float)1));
-			g2d.drawImage(importedImage, 0, 0, importedImgWidth, importedImgHeigth, null);
-			g2d.dispose();
-			
-			//this.image=importedImage;
+//			Graphics2D g2d = this.image.createGraphics();
+//			int transparencyImgWidth = importedImage.getWidth();
+//			int transparencyImgHeigth = importedImage.getHeight();
+//			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,(float)1));
+//			g2d.drawImage(transparencyImg, 0, 0, transparencyImgWidth, transparencyImgHeigth, null);
+//			//g2d.drawImage(originalImg, 0, 0, transparencyImgWidth, transparencyImgHeigth, null);
+//			g2d.dispose();
+//			
+			this.image=importedImage;
 			this.gs=this.image.getGraphics();
-			this.g=(Graphics2D)gs;
+			this.g=(Graphics2D)this.gs;
 			this.g.setColor(backgroundColor);
 			this.g.setColor(foregroundColor);
 			this.canvas.setImage(this.image);
@@ -1006,7 +1010,7 @@ public class DrawingBoardMonitor extends JFrame {// implements FrameGetShape
         open = true;
 	}
 	
-	public void clearContent() {
+	public boolean clearContent() {
 		if(resizable) {
 		    confirmAction();
 		}
@@ -1018,6 +1022,8 @@ public class DrawingBoardMonitor extends JFrame {// implements FrameGetShape
 	   g.setColor(foregroundColor);
 	   canvas.setImage(image);
 	   canvas.repaint();
+	   
+	   return true;
 	}
 	
 }

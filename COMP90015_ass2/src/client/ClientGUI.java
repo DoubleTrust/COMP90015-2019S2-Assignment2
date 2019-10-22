@@ -2,6 +2,7 @@ package client;
 
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -49,6 +51,9 @@ public class ClientGUI {
 	// ---------------------------------
 	private JTextPane chatPane;
 	// ---------------------------------
+	private Thread uploadImg;
+	private Thread downloadImg;
+	BufferedImage getIma;
 	
 	/**
 	 * Launch the application.
@@ -75,7 +80,7 @@ public class ClientGUI {
 	 */
 	public ClientGUI() {
 		// For coding only
-		//initialize();
+		initialize();
 	}
 	
 	/**
@@ -85,7 +90,7 @@ public class ClientGUI {
 		
 		// Initialize the frame
 		frame = new JFrame();
-		frame.setBounds(100, 100, 547, 629);
+		frame.setBounds(100, 100, 603, 670);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Client Whiteboard ");
 		
@@ -125,7 +130,7 @@ public class ClientGUI {
 
 		// Initialize the panel
 		panel = new JPanel();
-		panel.setBounds(0, 0, 533, 571);
+		panel.setBounds(0, 0, 581, 614);
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
 
@@ -183,11 +188,10 @@ public class ClientGUI {
 		panel.add(textField);
 		textField.setColumns(10);
 		// -----------------------------------------------------
-		
-		
+	
 		// 'send' button
 		JButton btnSend = new JButton("Send");
-		btnSend.setBounds(446, 496, 66, 23);
+		btnSend.setBounds(446, 496, 69, 33);
 		panel.add(btnSend);
 
 		// Add listener for 'Join WhiteBoard' button
@@ -205,31 +209,65 @@ public class ClientGUI {
 						client.whiteBoard.setVisible(true);
 						client.whiteBoard.setTitle("Client board");
 						
-						// A listener to keep updating and receiving the white board status in the server side
-						Thread updateCanvasListener = new Thread() {
+						// Add a listener for closing
+						client.whiteBoard.addWindowListener(new java.awt.event.WindowAdapter() {
+						    @Override
+						    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+						        // Create a confirmDialog for the user
+						    	int choice = JOptionPane.showConfirmDialog(new DrawingBoard(), "Do you want so save before closing?", "Notice", JOptionPane.YES_NO_OPTION);
+						         
+						    	// If user wants to close the window
+						    	if(choice == JOptionPane.YES_OPTION){
+						    		// Call 'SaveAs' function
+						    		client.whiteBoard.saveAs();
+						    		
+						        	// Dispose the frame
+						    		client.whiteBoard.dispose();
+						    		client.whiteBoard = null;
+					        	}
+						    	else if(choice == JOptionPane.NO_OPTION){
+						        	// Dispose the frame directly
+						    		client.whiteBoard.dispose();
+						    		client.whiteBoard = null;
+						    		//setActive(false);
+						    	}
+						    	else{
+						    		client.whiteBoard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+						    	}
+						    }
+						});	
+						
+						// A listener to keep uploading its img to the white board in the server side
+						uploadImg = new Thread() {
 							@Override
 							public void run() {
 								try {
 									while(true) {
-										if(client.remoteInterface.canSynchronize() == true) {
-											BufferedImage outputImg = setTransparency(client.whiteBoard.image);
-											
-											// Send the image
-											byte[] imageBytes = null;			
-											ByteArrayOutputStream bos = new ByteArrayOutputStream();
-											ImageIO.write(outputImg, "jpg", bos);
-											bos.flush();
-											imageBytes = bos.toByteArray();
-											bos.close();
-											
-											client.remoteInterface.updateBoardStatus(imageBytes);	
+										if(client.remoteInterface.canSynchronize() == true ) {
+											if(client.whiteBoard.mouseIsPressed == true) {
+	  											BufferedImage outputImg = client.whiteBoard.image;
+	  											
+	  											// Send the image
+	  											byte[] imageBytes = null;			
+	  											ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	  											ImageIO.write(outputImg, "jpg", bos);
+	  											bos.flush();
+	  											imageBytes = bos.toByteArray();
+	  											bos.close();
+	  											
+	  											client.remoteInterface.updateBoardStatus(imageBytes);	
+											}
 										}
 										else {
 											// Clear remote and local content
 											client.remoteInterface.clearContent();
 											client.whiteBoard.clearContent();
+											
+											// Sleep until the board could be synchronized
+											while(client.remoteInterface.canSynchronize() != true) {
+												Thread.sleep(1);
+											}
 										}
-
 										
 									} 
 								} catch (NullPointerException e) {
@@ -241,29 +279,48 @@ public class ClientGUI {
 								} catch (IOException e) {
 									System.out.println("IOException caught.");
 									e.printStackTrace();
+								} catch (InterruptedException e) {
 								} 
 							}
 						
 						};
-						updateCanvasListener.start();
+						uploadImg.start();
 						
-						// A listener to keep receiving the white board status in the server side
-						Thread getCanvasListener = new Thread() {
+						// A listener to keep downloading the white board img in the server side
+						downloadImg = new Thread() {
 							@Override
 							public void run() {
 								try {
 									while(true) {
 										if(client.remoteInterface.canSynchronize() == true) {
-											// Receive the image
-											InputStream in = new ByteArrayInputStream(client.remoteInterface.getBoardStatus());
-											BufferedImage image = ImageIO.read(in);		
-											in.close();
-	
-											client.whiteBoard.setCanvas(image);
+											// Check whether the user utilizes pencil or eraser										
+											if(client.whiteBoard.penEraOperation == false) {
+												// Sleep in case of being overlapped
+												Thread.sleep(2500);		
+												
+												InputStream in = new ByteArrayInputStream(client.remoteInterface.getBoardStatus());
+												getIma = ImageIO.read(in);		
+												in.close();	
+												client.whiteBoard.setCanvas(getIma);	
+											}
+											else {
+												if(client.whiteBoard.mouseIsPressed == false) {
+													InputStream in = new ByteArrayInputStream(client.remoteInterface.getBoardStatus());
+													getIma = ImageIO.read(in);		
+													in.close();	
+													client.whiteBoard.setCanvas(getIma);	
+												}
+											}
+													
 										}else {
 											// Clear remote and local content
 											client.remoteInterface.clearContent();
 											client.whiteBoard.clearContent();
+											
+											// Sleep until the board could be synchronized
+											while(client.remoteInterface.canSynchronize() != true) {
+												Thread.sleep(1);
+											}
 										}
 									
 									} 
@@ -276,19 +333,19 @@ public class ClientGUI {
 								} catch (IOException e) {
 									System.out.println("IOException caught.");
 									e.printStackTrace();
+								} catch (InterruptedException e) {
+									
 								} 
 							}
 						};
-						getCanvasListener.start();
-						
-						
+						downloadImg.start();				
 					}
 					
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				} catch (NullPointerException e) {
 					e.printStackTrace();
-					JOptionPane.showConfirmDialog(frame, "Manager closed the white board or connection error.", "Error", JOptionPane.YES_NO_OPTION);
+					JOptionPane.showMessageDialog(frame, "Manager have not created a board.");
 				} catch (IOException e) {
 					System.out.println("Exception caught.");
 					e.printStackTrace();
@@ -300,13 +357,44 @@ public class ClientGUI {
 		// Add listener for 'Clear Board' button 
 		clearBoardContentButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {		
-//				try {
-//
-//					
-//				} catch (RemoteException e) {
-//					e.printStackTrace();
-//				}
-			}
+				try {
+					// Stop synchronization
+					client.remoteInterface.changeSynchronization(false);
+					
+					client.remoteInterface.clearContent();
+					client.whiteBoard.clearContent();
+
+					// Create the JOptionPane to display waiting message
+			    	JOptionPane jop = new JOptionPane("White Board is being cleared...", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);			    
+			    	JDialog dialog = jop.createDialog(null, "Message");				
+					
+			    	// Create a thread to display JDialog
+					new Thread(new Runnable() {
+					    @Override
+					    public void run() {
+					    	try {
+								Thread.sleep(500);
+							} catch (InterruptedException e) {
+							}
+							// Check if the content is cleared
+							while (uploadImg.getState() != Thread.State.TIMED_WAITING && downloadImg.getState() != Thread.State.TIMED_WAITING) {
+								// Do nothing
+							}
+							dialog.dispose();
+					    }
+
+					}).start();
+					
+					// Set the visibility and block this thread till the above thread finish executing.
+					dialog.setVisible(true);
+					
+					// Restore the synchronization
+					client.remoteInterface.changeSynchronization(true);
+					
+				}catch (RemoteException e) {
+					e.printStackTrace();
+				} 
+			}			
 		});
 		
 		
@@ -457,29 +545,7 @@ public class ClientGUI {
 						
 						
 						if(originalUserList.getSize() != userinfo.length) {	
-							// Judge whether the client has been kicked
-							/*boolean isKicked = true;
-							
-							for(String name: userinfo) {
-								System.out.println(name);
-								if(name.equals(client.username + " (you)")) {
-									isKicked = false;
-								}
-							}					
-							if(isKicked) {
-								// Show kick message
-								JOptionPane.showConfirmDialog(frame, "You have been kicked from the manager.", "Error", JOptionPane.YES_NO_OPTION);
-								
-								// Disconnect
-					        	frame.dispose();
-					        	client.disconnect();
-					        	//System.exit(0);	
-							}
-							else {*/
-								// Update the user list
-								userList.setListData(userinfo);								
-							//}
-					
+							userList.setListData(userinfo);													
 						}
 					}
 
@@ -510,9 +576,6 @@ public class ClientGUI {
 					// Get the user info
 					ArrayList<String> dialogue = client.getDialogue();					
 
-//					// Compare whether the dialogueList number changed
-//					ListModel<String> originalUserList = userList.getModel();
-					
 					String mergedDialogue = "";
 					// Merge dialogue:
 					for(int i=0;i<dialogue.size();i++) {
@@ -526,7 +589,7 @@ public class ClientGUI {
 				}
 			} catch(NullPointerException e) {
 				System.out.println("NullPointerException caught");
-				e.printStackTrace();
+				//e.printStackTrace();
 			} catch (InterruptedException e) {
 				System.out.println("InterruptedException caught");
 				e.printStackTrace();
@@ -580,7 +643,7 @@ public class ClientGUI {
 	 */
 
 	private boolean colorInRange(int color) {
-		int color_range = 210;
+		int color_range = 254;
         int red = (color & 0xff0000) >> 16;// 获取color(RGB)中R位
         int green = (color & 0x00ff00) >> 8;// 获取color(RGB)中G位
         int blue = (color & 0x0000ff);// 获取color(RGB)中B位
