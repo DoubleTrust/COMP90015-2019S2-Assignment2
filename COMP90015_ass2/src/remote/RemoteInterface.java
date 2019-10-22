@@ -5,23 +5,16 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-/**
- * @author Chaoxian Zhou, Yangyang Long, Jiuzhou Han, Wentao Yan
- * @date 19/10/2019
- */
-public interface RemoteInterface extends Remote{
-	/** interface to get() and set() the parameter of allow and require
-	 * the following 4 functions 
-	 * @throws RemoteException
+	/**
+	 * @author Chaoxian Zhou, Yangyang Long, Jiuzhou Han, Wentao Yan
+	 * @date 19/10/2019
 	 */
-	public int getAllow() throws RemoteException;
-	public int getRequire() throws RemoteException;
-	public void setAllow(int allow) throws RemoteException;
-	public void setRequire(int require)throws RemoteException;
+	public interface RemoteInterface extends Remote{
+		
 	/** interface to create the white board (for manager only)
 	 * @throws RemoteException
 	 */
-	public byte[] createWhiteBoard() throws RemoteException;
+	public void createWhiteBoard() throws RemoteException;
 	
 	/** interface to get the status of the white board 
 	 * @throws RemoteException
@@ -91,21 +84,30 @@ public interface RemoteInterface extends Remote{
 	/** 
 	 * interface to clear the content of a white board
 	 */
-	public void clearContent() throws RemoteException;
+	public boolean clearContent() throws RemoteException;
 
 	// ----------------------------------------------------------------------------
 	/** interface to record dialogue 
 	 * @throws RemoteException
 	 */
 	public void updateDialogue(String dialogue, String username) throws RemoteException;
-	
-	
+		
 	/** interface to return dialogue
 	 * @throws RemoteException
 	 */
 	public ArrayList<String> getDialogue() throws RemoteException;
 	// ----------------------------------------------------------------------------
-        /** client uses this interface to change the value of require to 1
+	
+	/** interface to get() and set() the parameter of allow and require
+	 * the following 4 functions 
+	 * @throws RemoteException
+	 */
+	public int getAllow() throws RemoteException;
+	public int getRequire() throws RemoteException;
+	public void setAllow(int allow) throws RemoteException;
+	public void setRequire(int require)throws RemoteException;	
+	
+    /** client uses this interface to change the value of require to 1
 	 * @throws RemoteException
 	 */
 	public void AllowClient()throws RemoteException;

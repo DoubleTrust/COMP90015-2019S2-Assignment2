@@ -10,14 +10,17 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+
+import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
+
 import remote.RemoteInterface;
 
 /**
  * @author Wentao Yan
  * @date 17/10/2019
  */
-public class RemoteServer {
-	
+public class RemoteServer {	
 	
 	/**
 	 * Define port number
@@ -104,6 +107,13 @@ public class RemoteServer {
 			else {
 				System.out.println("RMI initiation failed. Please check your RMI status and socket settings.");
 			}
+			
+			// Initialize the skin
+	        BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.translucencySmallShadow;
+	        org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
+	        UIManager.put("RootPane.setupButtonVisible", false);
+	        
+
 			
 		} catch (Exception e) {
 			e.printStackTrace();
