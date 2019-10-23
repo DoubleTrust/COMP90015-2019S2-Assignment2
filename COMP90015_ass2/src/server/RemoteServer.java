@@ -73,7 +73,7 @@ public class RemoteServer {
 			
 			
 			// Create the registry (localhost with specified port number) and publish the remote object's stub in the registry under the name "RemoteOperation"
-			Registry registry = LocateRegistry.getRegistry(Integer.parseInt(this.port));
+			Registry registry = LocateRegistry.createRegistry(Integer.parseInt(this.port));
 			
 			registry.rebind("RemoteOperation", remoteMethods);
 			
@@ -109,7 +109,7 @@ public class RemoteServer {
 			}
 			
 			// Initialize the skin
-	        BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.translucencySmallShadow;
+	        BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.generalNoTranslucencyShadow;
 	        org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
 	        UIManager.put("RootPane.setupButtonVisible", false);
 	        
