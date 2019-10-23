@@ -107,7 +107,6 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	 * Create the white board for the manager
 	 */
 	public DrawingBoard() {
-		
 		setResizable(false);
 		setBounds( 500, 100, boardWidth, boardHeight);
 		this.isActive = false;		

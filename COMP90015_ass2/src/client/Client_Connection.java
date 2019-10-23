@@ -9,6 +9,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
+import org.jb2011.lnf.beautyeye.ch19_list.BEListUI;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -34,7 +35,7 @@ public class Client_Connection {
 	private ManagerGUI managerGUI;
 	private ClientGUI clientGUI;
 	private JTextField userName;
-	private int allowed=0;
+	private int allowed = 0;
 	/**	
 	 * Launch the application.
 	 */
@@ -57,9 +58,11 @@ public class Client_Connection {
 
 	/**
 	 * Create the application.
+	 * @throws Exception 
 	 */
-	public Client_Connection() {
+	public Client_Connection() throws Exception {
 		initialize();
+
 	}
 
 	/**
@@ -154,7 +157,7 @@ public class Client_Connection {
 						}
 						else if(userAmount > 0){	
 							// Create the JOptionPane to display waiting message
-					    	JOptionPane jop = new JOptionPane("Please wait for authorization.", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);			    
+					    	JOptionPane jop = new JOptionPane("Waiting for authorization...", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);			    
 					    	JDialog dialog = jop.createDialog(null, "Message");	
 							
 					    	// Create a thread to display JDialog

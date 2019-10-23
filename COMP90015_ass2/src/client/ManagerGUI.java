@@ -783,6 +783,7 @@ public class ManagerGUI {
 			} catch (NullPointerException e) {
 				System.out.println("Exception caught.");
 				e.printStackTrace();
+				return;
 			} catch (RemoteException e) {
 				System.out.println("RemoteException caught.");
 				e.printStackTrace();

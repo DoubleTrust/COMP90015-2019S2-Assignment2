@@ -49,7 +49,7 @@ import java.util.ArrayList;
 	/** interface to remove username and corresponding white board
 	 * @throws RemoteException
 	 */
-	public void RemoveClient(String username) throws RemoteException;
+	public void RemoveUser(String username) throws RemoteException;
 	
 	/** interface to remove all clients' info
 	 * @throws RemoteException

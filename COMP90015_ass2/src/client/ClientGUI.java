@@ -105,7 +105,7 @@ public class ClientGUI {
 		    	if(choice == JOptionPane.YES_OPTION){
 		        	try {						
 						// Remove the client's username and close the board
-						client.remoteInterface.RemoveClient(client.username);	
+						client.remoteInterface.RemoveUser(client.username);	
 						
 						// Shut down the client application
 						System.exit(0);
@@ -326,7 +326,7 @@ public class ClientGUI {
 									} 
 								} catch (NullPointerException e) {
 									System.out.println("Exception caught.");
-									//e.printStackTrace();
+									return;
 								} catch (RemoteException e) {
 									System.out.println("RemoteException caught.");
 									e.printStackTrace();

@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
@@ -57,7 +58,7 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	 */
 	protected RemoteImplementation() throws RemoteException {
 		this.clientInfo = new ArrayList<String>();
-    this.dialogueList = new ArrayList<String>();
+		this.dialogueList = new ArrayList<String>();
 	}
 	
 	/** 
@@ -66,6 +67,12 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	@Override
 	public void uploadUserInfo(String username) throws RemoteException {
 		this.clientInfo.add(username);
+		
+		System.out.println("Current users:");
+		for(String name:this.clientInfo) {
+            System.out.print(name+ " ");
+        }
+		 System.out.println();
 	}
 	
 	
@@ -84,11 +91,15 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	 * Implementation of removing the client's username and corresponding white board
 	 */
 	@Override
-	public void RemoveClient(String username) throws RemoteException {
+	public void RemoveUser(String username) throws RemoteException {
 		this.clientInfo.remove(username);
 		
-		// remove the corresponding white board
-		//(to be added...)
+		System.out.println("Current users:");
+		for(String name:this.clientInfo) {
+            System.out.print(name+ " ");
+        }
+		 System.out.println();
+		
 	}
 	
 	/** 
@@ -98,7 +109,7 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	public void removeAllInfo() throws RemoteException {
 		this.clientInfo.clear();
 		this.BoardMonitor = null;
-		//this.clientWhiteBoards = null;
+		System.out.println("All users have left the system.");
 	}
 	
 	/** 
@@ -124,6 +135,12 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 		else {
 			// Remove the user from user list 
 			this.clientInfo.remove(this.kickUsername);
+			
+			System.out.println("Current users:");
+			for(String name:this.clientInfo) {
+	            System.out.print(name+ " ");
+	        }
+			 System.out.println();
 			
 			return "";
 		}
