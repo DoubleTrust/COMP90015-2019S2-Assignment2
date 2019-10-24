@@ -9,13 +9,8 @@ import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import server.DrawingBoardMonitor;
 import remote.RemoteInterface;
 
@@ -262,56 +257,7 @@ public class RemoteImplementation extends UnicastRemoteObject implements RemoteI
 	 */
 	public boolean clearContent() throws RemoteException{
 		return this.BoardMonitor.clearContent();
-	}
-	
-	private BufferedImage setTransparency(BufferedImage image) {
-		// 高度和宽度
-        int height = image.getHeight();
-        int width = image.getWidth();
-
-        // 生产背景透明和内容透明的图片
-        ImageIcon imageIcon = new ImageIcon(image);
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
-        Graphics2D g2D = (Graphics2D) bufferedImage.getGraphics(); // 获取画笔
-        g2D.drawImage(imageIcon.getImage(), 0, 0, null); // 绘制Image的图片
-
-        int alpha = 0; // 图片透明度
-        // 外层遍历是Y轴的像素
-        for (int y = bufferedImage.getMinY(); y < bufferedImage.getHeight(); y++) {
-            // 内层遍历是X轴的像素
-            for (int x = bufferedImage.getMinX(); x < bufferedImage.getWidth(); x++) {
-                int rgb = bufferedImage.getRGB(x, y);
-                // 对当前颜色判断是否在指定区间内
-                if (colorInRange(rgb)) {
-                    alpha = 0;
-                } else {
-                    // 设置为不透明
-                    alpha = 255;
-                }
-                // #AARRGGBB 最前两位为透明度
-                rgb = (alpha << 24) | (rgb & 0x00ffffff);
-                bufferedImage.setRGB(x, y, rgb);
-            }
-        }
-        // 绘制设置了RGB的新图片
-        g2D.drawImage(bufferedImage, 0, 0, null);
-        g2D.dispose();		
-		
-		return bufferedImage;
-	}
-
-	private boolean colorInRange(int color) {
-		int color_range = 210;
-        int red = (color & 0xff0000) >> 16;// 获取color(RGB)中R位
-        int green = (color & 0x00ff00) >> 8;// 获取color(RGB)中G位
-        int blue = (color & 0x0000ff);// 获取color(RGB)中B位
-        // 通过RGB三分量来判断当前颜色是否在指定的颜色区间内
-        if (red >= color_range && green >= color_range && blue >= color_range) {
-            return true;
-        }
-        ;
-        return false;
-	}
+	}	
 	
 	/** 
 	 * Implementation of joining the white board (client only)
