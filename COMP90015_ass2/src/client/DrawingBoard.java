@@ -12,7 +12,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.BorderLayout;
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent; 
@@ -23,8 +22,6 @@ import java.awt.Point;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import org.jb2011.lnf.beautyeye.ch3_button.BEButtonUI;
 
 /**
  * @author Chaoxian Zhou, Yangyang Long, Jiuzhou Han, Wentao Yan
@@ -43,6 +40,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	
 	// Layered Pane initialization
 	ResizableShapes resizableShape;
+    ResizableLine resizableLine;
 	JLayeredPane lp = new JLayeredPane();
 	JLabel backgroundImage = new JLabel();
 	boolean resizable = false;
@@ -85,7 +83,6 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	Color eraserColor = new Color(254,254,254);
 	private String keyword = "pencil"; 
 	private int pixel_size = 3; 
-	private boolean fill = false;
 	private String inputString;
 	public boolean mouseIsPressed = false;
 	//public boolean specialOperationIsConfirmed = false;
@@ -101,7 +98,6 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// Board config
 	int boardWidth = 1029;
 	int boardHeight = 757;
-	private JTextField textField;
 	
 	/*
 	 * Create the white board for the manager
@@ -189,30 +185,41 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		// When the mouse is released, draw corresponding objects.
 		canvas.addMouseListener(new MouseAdapter(){
 			public void mouseReleased(final MouseEvent e){
-				//mouseIsPressed = false; (move to the end)
 				x = -1;
 				y = -1;
 				x2 = e.getX();
 				y2 = e.getY();
+				int xx1 = x1;
+				int yy1 = y1;
+				int xx2 = x2;
+				int yy2 = y2;
+				g.setColor(foregroundColor);
 				if(keyword=="line")
 				{
-					g.setColor(foregroundColor);
-					g.drawLine(x1, y1, x2, y2);
-					canvas.repaint();
+					Image backImage;
+					backImage = image;
+						
+					backgroundImage = new JLabel();
+					ImageIcon canvasContent = new ImageIcon(backImage);
+					backgroundImage.setIcon(canvasContent);
+					backgroundImage.setBounds(0, 0, canvasWidth, canvasWidth);
+					lp.add(backgroundImage, new Integer(150));
+					
+					
+					resizableLine = new ResizableLine(keyword,xx1,yy1,xx2,yy2,foregroundColor,pixel_size);
+					resizableLine.setOpaque(false);
+					resizableLine.setBounds(0, 0, canvasWidth, canvasWidth);
+					lp.add(resizableLine, new Integer(200));
+					btnConfirm.setVisible(true);
+					
+					resizable = true;
 				}
-				else
+				else if(keyword=="oval"||keyword=="circle"||keyword=="square"||keyword=="rectangle")
 				{
-					int xx1 = x1;
-					int yy1 = y1;
-					int xx2 = x2;
-					int yy2 = y2;
-					g.setColor(foregroundColor);
 					if(x2-x1>0&&y2-y1>0)
 					{
 						xx1 = x1;
 						yy1 = y1;
-						// width = x2 - x1;
-						// height = y2 - y1;
 						xx2 = x2;
 						yy2 = y2;
 					}
@@ -220,8 +227,6 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 					{
 						xx1 = x1;
 						yy1 = y2;
-						// width = x2 - x1;
-						// height = y1 - y2;
 						xx2 = x2;
 						yy2 = y1;
 					}
@@ -229,8 +234,6 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 					{
 						xx1 = x2;
 						yy1 = y2;
-						// width = x1 - x2;
-						// height = y1 - y2;
 						xx2 = x1;
 						yy2 = y1;
 					}
@@ -238,37 +241,30 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 					{
 						xx1 = x2;
 						yy1 = y1;
-						// width = x1 - x2;
-						// height = y2 - y1;
 						xx2 = x1;
 						yy2 = y2;
 					}
-					if(keyword=="oval"||keyword=="circle"||keyword=="square"||keyword=="rectangle")
-					{			
-						Image backImage;
-						backImage = image;
-							
-            
-						backgroundImage = new JLabel();
-						ImageIcon canvasContent = new ImageIcon(backImage);
-						backgroundImage.setIcon(canvasContent);
-						backgroundImage.setBounds(0, 0, canvasWidth, canvasWidth);
-						lp.add(backgroundImage, new Integer(150));
+					
+	
+					Image backImage;
+					backImage = image;
 						
-						
-						resizableShape = new ResizableShapes(keyword,xx1,yy1,xx2,yy2,foregroundColor,pixel_size);
-						resizableShape.setOpaque(false);
-						resizableShape.setBounds(0, 0, canvasWidth, canvasWidth);
-						lp.add(resizableShape, new Integer(200));
-						btnConfirm.setVisible(true);
-						
-						resizable = true;
-					}
-					canvas.repaint();
+					backgroundImage = new JLabel();
+					ImageIcon canvasContent = new ImageIcon(backImage);
+					backgroundImage.setIcon(canvasContent);
+					backgroundImage.setBounds(0, 0, canvasWidth, canvasWidth);
+					lp.add(backgroundImage, new Integer(150));
+					
+					
+					resizableShape = new ResizableShapes(keyword,xx1,yy1,xx2,yy2,foregroundColor,pixel_size);
+					resizableShape.setOpaque(false);
+					resizableShape.setBounds(0, 0, canvasWidth, canvasWidth);
+					lp.add(resizableShape, new Integer(200));
+					btnConfirm.setVisible(true);
+					
+					resizable = true;
 				}
-				
-				// Start to download server's image
-				mouseIsPressed = false;
+				canvas.repaint();
 			}
 		});
 		
@@ -505,7 +501,14 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("confirm clicked.");		
 			mouseIsPressed = true;
-			confirmAction();
+			if(keyword=="line")
+			{
+				confirmLine();
+			}
+			else
+			{
+				confirmAction();
+			}
 			resizable = false;			
 		}
 	});
@@ -907,7 +910,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 		canvas.setImage(image);//set background color of canvas
 		Container s = getContentPane();
 		lp = new JLayeredPane();
-		canvas.setBounds(0, 0, 970, 690);
+		canvas.setBounds(0, 0, canvasWidth, canvasHeight);
 		lp.add(canvas, new Integer(100));
 		s.add(lp,BorderLayout.CENTER);
 	}
@@ -941,4 +944,20 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	   
 	   return true;
 	}
+	
+	public void confirmLine()
+	 {
+	  double xs = resizableLine.returnXs();
+	  double ys = resizableLine.returnYs();
+	  double xe = resizableLine.returnXe();
+	  double ye = resizableLine.returnYe();
+	  lp.remove(backgroundImage);
+	  lp.remove(resizableLine);
+	  BasicStroke bStroke = new BasicStroke(pixel_size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	  g.setStroke(bStroke);
+	  g.setColor(foregroundColor);
+	  g.drawLine((int) xs,(int) ys,(int) xe,(int) ye);
+	  canvas.repaint();
+	  btnConfirm.setVisible(false);
+	 }
 }

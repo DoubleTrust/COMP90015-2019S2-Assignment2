@@ -12,7 +12,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.BorderLayout;
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent; 
@@ -23,8 +22,6 @@ import java.awt.Point;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import client.DrawingBoard;
 
 /**
  * @author Chaoxian Zhou, Yangyang Long, Jiuzhou Han, Wentao Yan
@@ -86,7 +83,6 @@ public class DrawingBoardMonitor extends JFrame {// implements FrameGetShape
 	Color eraserColor = new Color(254,254,254);
 	private String keyword = "pencil"; 
 	private int pixel_size = 3; 
-	private boolean fill = false;
 	private String inputString;
 	
 	int hasSaved = 0;
