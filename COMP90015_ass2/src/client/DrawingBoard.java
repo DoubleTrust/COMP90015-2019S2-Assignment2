@@ -68,6 +68,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	private JMenuItem itemOval;
 	private JMenuItem itemSquare;
 	private JMenuItem itemRectangle;
+	private JButton btnClear;
 	private boolean isActive;
 	private JButton btnText;	
 	private JButton btnPixelSize;
@@ -83,6 +84,7 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	Color eraserColor = new Color(254,254,254);
 	private String keyword = "pencil"; 
 	private int pixel_size = 3; 
+  private boolean fill = false;
 	private String inputString;
 	public boolean mouseIsPressed = false;
 	//public boolean specialOperationIsConfirmed = false;
@@ -265,6 +267,8 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 					resizable = true;
 				}
 				canvas.repaint();
+				// Start to download server's image
+				mouseIsPressed = false;
 			}
 		});
 		
@@ -499,7 +503,6 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	// "Confirm" button listener
 	btnConfirm.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("confirm clicked.");		
 			mouseIsPressed = true;
 			if(keyword=="line")
 			{
