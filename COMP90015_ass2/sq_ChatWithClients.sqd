@@ -1983,7 +1983,7 @@
                                                                         <source class="net.java.amateras.uml.sequencediagram.model.ActivationModel" reference="../../.."/>
                                                                         <target class="net.java.amateras.uml.sequencediagram.model.ActivationModel" reference="../../../../../.."/>
                                                                         <bendpoints/>
-                                                                        <name>Update Dialogue()</name>
+                                                                        <name>Download Dialogue()</name>
                                                                         <direction>true</direction>
                                                                         <order>5</order>
                                                                         <oldOrder>5</oldOrder>
@@ -2519,7 +2519,7 @@
                                                                   <source class="net.java.amateras.uml.sequencediagram.model.ActivationModel" reference="../../.."/>
                                                                   <target class="net.java.amateras.uml.sequencediagram.model.ActivationModel" reference="../../../../../.."/>
                                                                   <bendpoints/>
-                                                                  <name>Update Dialogue()</name>
+                                                                  <name>Download Dialogue()</name>
                                                                   <direction>true</direction>
                                                                   <order>6</order>
                                                                   <oldOrder>6</oldOrder>
@@ -2878,7 +2878,7 @@
                                                             <source class="net.java.amateras.uml.sequencediagram.model.ActivationModel" reference="../../.."/>
                                                             <target class="net.java.amateras.uml.sequencediagram.model.ActivationModel" reference="../../../../../.."/>
                                                             <bendpoints/>
-                                                            <name>Update Dialogue()</name>
+                                                            <name>Download Dialogue()</name>
                                                             <direction>true</direction>
                                                             <order>7</order>
                                                             <oldOrder>0</oldOrder>
@@ -4200,7 +4200,7 @@
                                             <movable>true</movable>
                                           </target>
                                           <bendpoints/>
-                                          <name>Update Dialogue()</name>
+                                          <name>Update Dialogue Info()</name>
                                           <direction>true</direction>
                                           <order>4</order>
                                           <oldOrder>4</oldOrder>
@@ -4216,7 +4216,7 @@
                                       <movable>true</movable>
                                     </target>
                                     <bendpoints/>
-                                    <name>Update Dialogue()</name>
+                                    <name>Update Dialogue Info()</name>
                                     <direction>true</direction>
                                     <order>3</order>
                                     <oldOrder>3</oldOrder>
@@ -4232,7 +4232,7 @@
                                 <movable>true</movable>
                               </target>
                               <bendpoints/>
-                              <name>Update Dialogue()</name>
+                              <name>Update Dialogue Info()</name>
                               <direction>true</direction>
                               <order>2</order>
                               <oldOrder>2</oldOrder>

@@ -5400,7 +5400,7 @@
                                                   <movable>true</movable>
                                                 </target>
                                                 <bendpoints/>
-                                                <name>setKickUsername()</name>
+                                                <name>Set KickUsername()</name>
                                                 <direction>true</direction>
                                                 <order>4</order>
                                                 <oldOrder>4</oldOrder>
@@ -5416,7 +5416,7 @@
                                             <movable>true</movable>
                                           </target>
                                           <bendpoints/>
-                                          <name>setKickUsername()</name>
+                                          <name>Set KickUsername()</name>
                                           <direction>true</direction>
                                           <order>3</order>
                                           <oldOrder>3</oldOrder>
