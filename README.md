@@ -7,7 +7,7 @@
 
 2. 启动Server：直接启动位于“server"目录下的"RemoteServer.java”，依据提示输入主机名和端口号。若只是在本机测试，主机名统一为“localhost”。端口号自己设定，但需要大于等于1099，并且保证输入的端口号目前未被其他程序占用。当Server启动后，RMI会跟着被创建，端口号和输入的值一致；
 
-   ![RMI启动](/Users/sebastianyan/Desktop/JAVA_Workplace/COMP90015-2019S2-Assignment2/README_IMG/RMI.png)
+   ![RMI启动](/README_IMG/RMI.png)
 
 3. 启动Client：
 
