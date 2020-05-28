@@ -7,14 +7,14 @@
 
 2. 启动Server：直接启动位于“server"目录下的"RemoteServer.java”，依据提示输入主机名和端口号。若只是在本机测试，主机名统一为“localhost”。端口号自己设定，但需要大于等于1099，并且保证输入的端口号目前未被其他程序占用。当Server启动后，RMI会跟着被创建，端口号和输入的值一致；
 
-   ![RMI启动](/README_IMG/RMI.png)
+   ![RMI启动](https://github.com/DoubleTrust/COMP90015-2019S2-Assignment2/blob/master/README_IMG/RMI.png)
 
 3. 启动Client：
 
    1. 运行工程文件"Client"目录下的“Client_Connection.java”，依照提示输入对应的主机地址，端口号和用户名。若为本地测试，主机号统一为“localhost”。
-   ![Client_Connection](README_IMG/ClientConnection.png)
+   ![Client_Connection](https://github.com/DoubleTrust/COMP90015-2019S2-Assignment2/blob/master/README_IMG/ClientConnection.png)
    2. 进入ClientGUI界面后，选择“New Whiteboard”，开始绘画。
-   ![ClientGUI](README_IMG/clientGUI.png)
+   ![ClientGUI](https://github.com/DoubleTrust/COMP90015-2019S2-Assignment2/blob/master/README_IMG/clientGUI.png)
 
 ## 版本迭代
 
