@@ -98,8 +98,8 @@ public class DrawingBoard extends JFrame {// implements FrameGetShape
 	int secondSaved=0;
 	
 	// Board config
-	int boardWidth = 1024;
-	int boardHeight = 768;
+	int boardWidth = 1029;
+	int boardHeight = 757;
 	
 	/*
 	 * Create the white board for the manager

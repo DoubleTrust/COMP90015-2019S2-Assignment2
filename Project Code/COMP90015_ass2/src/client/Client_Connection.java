@@ -40,7 +40,6 @@ public class Client_Connection {
 					window.frame.setVisible(true);
 
 
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

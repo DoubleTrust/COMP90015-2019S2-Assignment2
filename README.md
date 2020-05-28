@@ -1,30 +1,26 @@
 # COMP90015-2019S2-Assignment2
  墨尔本大学2019年S2分布式系统项目文件
 
-**（若对你有帮助，可以点击一下star，谢谢啦）**
-
 ## 程序运行方法
 
-1. 启动RMI：
+1. 导入项目：如果使用Eclipse，请导入“Project Code”目录下的“COMP90015_ass2”作为工程文件；
 
-   1. (windows用户)打开控制台并转到工程文件bin目录下;
+2. 启动Server：直接启动位于“server"目录下的"RemoteServer.java”，依据提示输入主机名和端口号。若只是在本机测试，主机名统一为“localhost”。端口号自己设定，但需要大于等于1099，并且保证输入的端口号目前未被其他程序占用。当Server启动后，RMI会跟着被创建，端口号和输入的值一致；
 
-   2. 输入"start rmiregistry XXXX" (XXXX为registry占用端口号，默认为1099)
+   ![RMI启动](/Users/sebastianyan/Desktop/JAVA_Workplace/COMP90015-2019S2-Assignment2/README_IMG/RMI.png)
 
-      （若提示未安装rmiregistry，请google下载并安装JAVA JDK）
-
-   ![RMI](README_IMG/RMI.png)
-
-2. 启动Server：运行工程文件的“RemoteServer.java”，依照提示输入端口号（需与registry端口号一致）
-   ![Server](README_IMG//server.png)
 3. 启动Client：
 
-   1. 运行工程文件的“Client_Connection.java”，依照提示输入主机地址，端口号和用户名（主机号：localhost；端口号与以上一致；用户名目前无要求）
+   1. 运行工程文件"Client"目录下的“Client_Connection.java”，依照提示输入对应的主机地址，端口号和用户名。若为本地测试，主机号统一为“localhost”。
    ![Client_Connection](README_IMG/ClientConnection.png)
    2. 进入ClientGUI界面后，选择“New Whiteboard”，开始绘画。
    ![ClientGUI](README_IMG/clientGUI.png)
 
 ## 版本迭代
+
+### v0.91 (2020/05/28 16:53pm)
+
+- 更正说明文档，删除了容易让人产生误解的语句
 
 ### v0.9 (2019/12/09 11:23pm)
 

@@ -582,11 +582,8 @@ public class ClientGUI {
 
 				}
 			} catch(NullPointerException e) {
-				JOptionPane.showMessageDialog(frame, "Server crashed.");
-				
-				// Shut down the manager application
-				System.exit(0);
-				
+				System.out.println("NullPointerException caught");
+				//e.printStackTrace();
 			} catch (InterruptedException e) {
 				System.out.println("InterruptedException caught");
 				e.printStackTrace();
